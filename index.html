@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rustam Romanov - Director</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg class="visually-hidden" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="showreel-bubble-glass" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016 0.03" numOctaves="2" seed="4" result="noise">
+        <animate attributeName="baseFrequency" dur="9s" values="0.016 0.03;0.022 0.038;0.016 0.03" repeatCount="indefinite" />
+      </feTurbulence>
+      <feGaussianBlur in="noise" stdDeviation="0.75" result="softNoise" />
+      <feDisplacementMap id="feDisp" in="SourceGraphic" in2="softNoise" scale="0" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+</svg>
+<div class="cr"><span class="cr-l">Play</span></div>
+<div id="pg"></div>
+
+<!-- YT/VIMEO MODAL -->
+<div id="modal" onclick="if(event.target===this)closeM()">
+  <div id="mi">
+    <iframe id="mif" src="" allow="autoplay;fullscreen" allowfullscreen></iframe>
+    <button id="mc" onclick="closeM()">&times;</button>
+  </div>
+</div>
+
+<!-- SHOWREEL MODAL -->
+<div id="showreel-modal" class="showreel-modal" onclick="if(event.target===this)closeShowreel()" role="presentation">
+  <div class="showreel-bubble-wrap" id="showreel-bubble-wrap">
+    <div class="showreel-bubble" id="showreel-bubble" role="dialog" aria-label="Showreel" onclick="event.stopPropagation()">
+      <button type="button" class="showreel-modal-close" id="showreel-modal-close" aria-label="Закрыть">&times;</button>
+      <div class="showreel-frame">
+        <video id="showreel-player" class="showreel-player" playsinline preload="metadata" controlslist="nodownload" disablePictureInPicture>
+          <source src="assets/video/showreel2025_small_1.mp4" type="video/mp4" />
+        </video>
+        <button type="button" class="showreel-pause" id="showreel-pause" aria-pressed="false" aria-label="Пауза">
+          <svg class="showreel-ic showreel-ic--pause" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><rect x="5" y="4" width="5" height="16" rx="0.5" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="0.5" fill="currentColor"/></svg>
+          <svg class="showreel-ic showreel-ic--play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.5 6.2L18.5 12L9.5 17.8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BTS MODAL -->
+<div id="bts-modal" onclick="if(event.target===this)closeBts()">
+  <div class="bts-wrap">
+    <button class="bts-close" onclick="closeBts()">&times;</button>
+    <h3 class="bts-title">BACKSTAGE</h3>
+    <div class="bts-grid" id="backstage-grid"></div>
+    <div class="bts-viewer" id="bts-viewer" onclick="if(event.target===this)closeBtsViewer()">
+      <img id="bts-viewer-img" src="" alt="">
+    </div>
+  </div>
+</div>
+
+<nav id="nav">
+  <a href="#" class="nl">Режиссер · Продюсер · Креатив</a>
+  <div class="nm">
+    <a href="#sp">Скиллы</a>
+    <a href="#works">Клипы</a>
+    <a href="#ads">Реклама</a>
+    <a href="#about">Биография</a>
+    <a href="#ct">Контакты</a>
+    <div class="lng">
+      <b id="bru" class="on" onclick="sL('ru')">RU</b>
+      <b id="ben" onclick="sL('en')">EN</b>
+    </div>
+  </div>
+</nav>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro-bg">
+    <video id="reel" autoplay muted loop playsinline webkit-playsinline preload="auto" disablePictureInPicture disableRemotePlayback>
+      <source src="assets/video/showreelbackmobile.mp4" media="(max-width: 720px)" type="video/mp4">
+      <source src="assets/video/showreelback.mp4" type="video/mp4">
+      <source src="assets/video/showreel.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="intro-veil"></div>
+  <div class="intro-hero" id="intro-hero">
+    <div class="intro-slogan-block" id="intro-slogan-block">
+      <p class="ir ir-oneline" id="ir">Искусство создания визуальных историй</p>
+    </div>
+  </div>
+  <h1 class="iname" aria-label="Rustam Romanov">
+    <canvas id="name-fx" width="1500" height="520"></canvas>
+  </h1>
+  <div class="ifoot" id="ifoot">
+    <div class="ist" id="intro-stats" role="group" aria-label="Статистика">
+      <span class="istat"><em>200+</em> проектов</span>
+      <span class="istat"><em>2 млрд +</em> просмотров</span>
+      <span class="istat"><em>100+</em> артистов</span>
+      <span class="istat"><em>15+</em> лет опыта</span>
+      <div class="showreel-cta" id="showreel-cta">
+        <button type="button" class="showreel-btn" id="showreel-btn" data-c="view" aria-label="Смотреть showreel">
+          <span class="showreel-btn__pulse" aria-hidden="true"></span>
+          <span class="showreel-btn__label showreel-btn__label--ru" lang="ru">Смотреть showreel</span>
+          <span class="showreel-btn__label showreel-btn__label--en" lang="en">Watch showreel</span>
+        </button>
+      </div>
+    </div>
+    <div class="icue"><span>scroll</span><div class="icue-l"></div></div>
+  </div>
+</section>
+
+<!-- ARTISTS LAYER -->
+<section class="artists-layer S" id="artists-layer">
+  <div class="artists-inset rv">
+    <canvas id="bcanvas"></canvas>
+  </div>
+</section>
+
+<!-- SUPERPOWER SWITCH -->
+<section class="sp-switch S" id="sp">
+  <div class="W">
+    <div class="sp-layout rv">
+      <div class="sp-side-photo">
+        <img src="assets/img/skills-photo.png" alt="Rustam Romanov">
+      </div>
+      <div class="sp-right-stack">
+        <div class="sp-block">
+          <h3 class="sp-block-title">Суперсила</h3>
+          <div class="power-list">
+            <div class="power-item"><span>01</span><p>Генерировать идеи и быстро составлять презентации и тритменты.</p></div>
+            <div class="power-item"><span>02</span><p>Организовывать и руководить процессами пред- и пост-продакшена.</p></div>
+            <div class="power-item"><span>03</span><p>Оптимизировать процессы, находя лучшие решения под бюджет и сроки.</p></div>
+            <div class="power-item"><span>04</span><p>Изучать новое и внедрять инструменты, которые ускоряют результат.</p></div>
+          </div>
+        </div>
+        <div class="sp-block">
+          <h3 class="sp-block-title">Ключевые компетенции</h3>
+          <div class="power-list">
+            <div class="power-item"><span>01</span><p>Навыки управления командой и опыт взаимодействия с заказчиками.</p></div>
+            <div class="power-item"><span>02</span><p>Понимание принципов визуального сторителлинга, сеттинга, монтажа и ритма кадра.</p></div>
+            <div class="power-item"><span>03</span><p>Системное мышление: умение выстраивать процессы, выявлять проблемные участки, оптимизировать процессы.</p></div>
+            <div class="power-item"><span>04</span><p>Умение аргументированно и корректно вести диалог, дипломатичность, стрессоустойчивость в интенсивном продакшене.</p></div>
+          </div>
+          <div class="sp-tools">
+            <span class="pill">Figma</span><span class="pill">After Effects</span><span class="pill">Photoshop</span>
+            <span class="pill">Premiere Pro</span><span class="pill">Weavy · AI</span><span class="pill">Syntax · AI</span><span class="pill">Higgsfield · AI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 WORKS -->
+<section class="S" id="works">
+  <div class="W">
+    <div class="hdr rv">
+      <h2 class="h-t"><span>Клипы</span></h2>
+    </div>
+    <div class="chart rv" id="chart"></div>
+    <div class="wg5" id="wgrid"></div>
+  </div>
+</section>
+
+<!-- 03 ADS -->
+<section class="S dark" id="ads">
+  <div class="W">
+    <div class="hdr rv">
+      <h2 class="h-t"><span>Реклама</span></h2>
+    </div>
+    <div class="advs-slider rv" id="advs-slider" data-c="native">
+      <div class="advs-viewport" id="advs-viewport">
+        <div class="advs" id="advs"></div>
+      </div>
+    </div>
+    <div style="margin-top:56px">
+      <div class="hdr rv">
+        <h2 class="h-t"><span>Бренды</span></h2>
+      </div>
+      <div class="logos-g rv" id="logos"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-full S" id="about">
+  <div class="W">
+    <div class="ab-card rv">
+      <div class="ab">
+        <div class="ab-text">
+          <h2 class="ab-inline-title">Биография</h2>
+          <div class="ab-title-divider" aria-hidden="true"></div>
+          <p class="ab-p">Ульяновск, 2000-е.<br>Вооружённый только страстью к кино и маленькой видеокамерой, начинаю свой путь. Снимаю всё, что вижу, превращая обыденное в исключительное.</p>
+          <p class="ab-p">2010 г. Переезжаю в столицу. С бесконечным запасом креатива и смелости начинаю снимать музыкальные клипы на зеркалку.</p>
+          <p class="ab-p">Топовые артисты и крупные лейблы находят меня: от Басты до Тимати. Я становлюсь клипмейкером и основываю собственный продакшн. Музыкальные клипы, реклама, промо и документальные фильмы.</p>
+          <p class="ab-p">За это время снято 200 + проектов и 2 + миллиарда просмотров на YouTube.</p>
+          <p class="ab-p">Продолжая свой путь, я не устаю искать новые идеи и горизонты.</p>
+        </div>
+        <div class="ab-photo">
+          <img src="assets/img/bio-photo-user.png" alt="Rustam Romanov">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BACKSTAGE -->
+<section class="backstage-showcase S" id="backstage">
+  <div class="W">
+    <div class="backstage-title-wrap rv" data-c="native">
+      <canvas class="backstage-mosaic-canvas" id="backstage-mosaic-canvas" aria-hidden="true"></canvas>
+      <button class="backstage-title" type="button" data-c="native" onclick="openBts()">BACKSTAGE</button>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="ct" id="ct">
+  <p class="ct-label">Контакты</p>
+  <div class="ct-icons">
+    <a href="https://t.me/rustamromanov" target="_blank" class="ct-icon" title="t.me">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/rustamromanov.ru/" target="_blank" class="ct-icon" title="Instagram">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span class="fc">&copy; 2026 Rustam Romanov</span>
+  <div class="fl">
+    <a href="https://www.rustamromanov.ru" target="_blank">rustamromanov.ru</a>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
