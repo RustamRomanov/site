@@ -2094,6 +2094,14 @@ function sL(l) {
   const BUB_TIER_B = new Set([
     "Iowa", "Doni", "L\u2019one", "L'one", "Limba", "Niletto", "Гуф", "Мумий Тролль",
   ]);
+  /** Доля радиуса, на которую круг может заходить за край canvas (обрезка .artists-inset). */
+  const BUBBLE_OUTSIDE_FR = 1 / 3;
+  function bubbleAxisBounds(r, len) {
+    const o = r * BUBBLE_OUTSIDE_FR;
+    const min = r - o;
+    const max = len - r + o;
+    return { min, max, span: Math.max(0, max - min) };
+  }
   function bubbleNameWordCount(s) {
     return String(s).trim().split(/\s+/).filter(Boolean).length;
   }
@@ -2292,8 +2300,10 @@ function sL(l) {
       this.text = d.text; this.lab = d.lab; this.media = d.media;
       const rw = W / devicePixelRatio, rh = H / devicePixelRatio;
       this.r = pickBubbleRadius(d);
-      this.x = this.r + Math.random() * (rw - this.r * 2);
-      this.y = this.r + Math.random() * (rh - this.r * 2);
+      const bx = bubbleAxisBounds(this.r, rw);
+      const by = bubbleAxisBounds(this.r, rh);
+      this.x = bx.min + Math.random() * bx.span;
+      this.y = by.min + Math.random() * by.span;
       this.vx = (Math.random() - .5) * .18;
       this.vy = (Math.random() - .5) * .18;
       this.pulse = Math.random() * Math.PI * 2;
@@ -2302,7 +2312,11 @@ function sL(l) {
     }
     update() {
       const rw = W / devicePixelRatio, rh = H / devicePixelRatio;
-      const pad = 0;
+      const o = this.r * BUBBLE_OUTSIDE_FR;
+      const minX = this.r - o;
+      const maxX = rw - this.r + o;
+      const minY = this.r - o;
+      const maxY = rh - this.r + o;
       const dx = this.x - bmx, dy = this.y - bmy;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (pointerInside && dist < 220) {
@@ -2325,10 +2339,10 @@ function sL(l) {
       if (dragBubble !== this) {
         this.x += this.vx; this.y += this.vy;
       }
-      if (this.x < this.r + pad) { this.x = this.r + pad; this.vx *= -0.4; }
-      if (this.x > rw - this.r - pad) { this.x = rw - this.r - pad; this.vx *= -0.4; }
-      if (this.y < this.r + pad) { this.y = this.r + pad; this.vy *= -0.4; }
-      if (this.y > rh - this.r - pad) { this.y = rh - this.r - pad; this.vy *= -0.4; }
+      if (this.x < minX) { this.x = minX; this.vx *= -0.4; }
+      if (this.x > maxX) { this.x = maxX; this.vx *= -0.4; }
+      if (this.y < minY) { this.y = minY; this.vy *= -0.4; }
+      if (this.y > maxY) { this.y = maxY; this.vy *= -0.4; }
       this.pulse += .021;
       for (const b of bubbles) {
         if (b === this) continue;
