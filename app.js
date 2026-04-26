@@ -2082,7 +2082,7 @@ function sL(l) {
     if (top) return { type: "artist", localCandidates, fallback: `https://i.ytimg.com/vi/${top.id}/hqdefault.jpg` };
     const work = WORKS.find((item) => item.a.toLowerCase().includes(keyword));
     if (work) return { type: "artist", localCandidates, fallback: `https://i.ytimg.com/vi/${work.id}/hqdefault.jpg` };
-    return { type: "artist", localCandidates, fallback: "assets/img/portrait-suit2.jpg" };
+    return { type: "artist", localCandidates, fallback: "assets/img/portrait-suit1.jpg" };
   }
 
   function labelMediaRef(name) {
@@ -2133,7 +2133,7 @@ function sL(l) {
           }
         } catch {}
       }
-      const fallback = ref.fallback || "assets/img/portrait-suit2.jpg";
+      const fallback = ref.fallback || "assets/img/portrait-suit1.jpg";
       imageCache.set(key, fallback);
       return fallback;
     }
