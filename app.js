@@ -1,5 +1,25 @@
 gsap.registerPlugin(ScrollTrigger);
 
+/** Разрешает относительные `assets/…` и `backstage/…` в абсолютный URL (нужно для GitHub Pages /site/, где <base> не влияет на Image/Canvas так же, как на <img> в HTML). */
+const __ASSET_ROOT = (() => {
+  try {
+    const s = document.currentScript;
+    if (s && s.src) return new URL(".", s.src).href;
+  } catch (_) {}
+  return new URL("./", document.baseURI).href;
+})();
+function absAsset(rel) {
+  if (rel == null || rel === "") return rel;
+  if (/^https?:\/\//i.test(String(rel)) || String(rel).startsWith("//") || String(rel).startsWith("data:") || String(rel).startsWith("blob:")) {
+    return rel;
+  }
+  try {
+    return new URL(String(rel).replace(/^\//, ""), __ASSET_ROOT).href;
+  } catch (_) {
+    return rel;
+  }
+}
+
 /** When true, #reel (hero bg) is intentionally not auto-resumed — e.g. showreel modal plays with sound and Chrome would fight pause/play loops. */
 let __bgReelResumeSuppressed = false;
 function resumeBackgroundReel() {
@@ -617,7 +637,7 @@ if (backstageGrid) {
     card.type = "button";
     card.className = "bts-ph";
     card.setAttribute("aria-label", "Open backstage photo");
-    const src = `backstage/${name}`;
+    const src = absAsset(`backstage/${name}`);
     card.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
     card.addEventListener("click", () => openBtsViewer(src));
     backstageGrid.appendChild(card);
@@ -830,7 +850,7 @@ if (btsTitleWrap && btsTitleCanvas && btsTitleBtn) {
           active -= 1;
           pump();
         };
-        im.src = `backstage/${BACKSTAGE_IMAGES[idx]}`;
+        im.src = absAsset(`backstage/${BACKSTAGE_IMAGES[idx]}`);
       }
     };
     pump();
@@ -1113,10 +1133,8 @@ if (wgrid) {
   const NAV_OFFSET = 64;
   const NAV_HALF = 24;
   const FOCUS_MARGIN = 24;
-  const DIR_PREVIEW = "assets/assents/images_mosaic/";
-  const DIR_HQ = "assets/assents/images/";
-  const SRC = (i) => `${DIR_PREVIEW}img${i}.jpg`;
-  const SRC_HQ = (i) => `${DIR_HQ}img${i}.jpg`;
+  const SRC = (i) => absAsset(`assets/assents/images_mosaic/img${i}.jpg`);
+  const SRC_HQ = (i) => absAsset(`assets/assents/images/img${i}.jpg`);
 
   const pointer = { x: -1e6, y: -1e6 };
   let selectedTileId = -1;
@@ -2091,17 +2109,18 @@ function sL(l) {
 
   function canLoadImage(src) {
     return new Promise((resolve) => {
+      const resolved = absAsset(src);
       const img = new Image();
       img.onload = () => resolve(true);
       img.onerror = () => resolve(false);
-      img.src = src;
+      img.src = resolved;
     });
   }
 
   async function firstAvailable(candidates) {
     for (const src of candidates) {
       // eslint-disable-next-line no-await-in-loop
-      if (await canLoadImage(src)) return src;
+      if (await canLoadImage(src)) return absAsset(src);
     }
     return null;
   }
@@ -2109,11 +2128,12 @@ function sL(l) {
   async function resolveMedia(ref) {
     const key = JSON.stringify(ref || {});
     if (imageCache.has(key)) return imageCache.get(key);
-    if (!ref) return "assets/img/portrait-dark.jpg";
+    if (!ref) return absAsset("assets/img/portrait-dark.jpg");
 
     if (ref.type === "label") {
-      imageCache.set(key, ref.src);
-      return ref.src;
+      const out = absAsset(ref.src);
+      imageCache.set(key, out);
+      return out;
     }
 
     if (ref.type === "artist") {
@@ -2133,12 +2153,12 @@ function sL(l) {
           }
         } catch {}
       }
-      const fallback = ref.fallback || "assets/img/portrait-suit1.jpg";
+      const fallback = absAsset(ref.fallback || "assets/img/portrait-suit1.jpg");
       imageCache.set(key, fallback);
       return fallback;
     }
 
-    return "assets/img/portrait-dark.jpg";
+    return absAsset("assets/img/portrait-dark.jpg");
   }
 
   async function ensureBubbleImage(bubble) {
