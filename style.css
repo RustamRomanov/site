@@ -1372,3 +1372,21 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .bts-viewer img{max-width:84vw}
   .artists-inset{height:180px}
 }
+
+/* No fine hover (phones / most tablets): логотипы на сетке брендов иначе не видны — только :hover. */
+@media (hover: none), (pointer: coarse) {
+  .logos-g .logo-c[class*="logo-"]::after {
+    opacity: 0.5;
+  }
+  .logos-g .logo-c[class*="logo-"] span {
+    opacity: 0.4;
+  }
+  .logos-g .logo-c[class*="logo-"]:active::after,
+  .logos-g .logo-c[class*="logo-"]:focus-visible::after {
+    opacity: 1;
+  }
+  .logos-g .logo-c[class*="logo-"]:active span,
+  .logos-g .logo-c[class*="logo-"]:focus-visible span {
+    opacity: 0;
+  }
+}

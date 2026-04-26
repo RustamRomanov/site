@@ -350,6 +350,43 @@ if (reel) {
   reel.setAttribute("webkit-playsinline", "");
   if ("playsInline" in reel) reel.playsInline = true;
 
+  (function initHeroBackgroundVideo() {
+    const mql = window.matchMedia("(max-width: 720px)");
+    const pickSrc = () =>
+      mql.matches
+        ? "assets/video/showreelbackmobile.mp4"
+        : "assets/video/showreelback.mp4";
+    const fallbacks = ["assets/video/showreel.mp4"];
+    let step = 0;
+    const tryLoad = (path) => {
+      reel.removeAttribute("src");
+      /** @type {HTMLSourceElement[]} */
+      const old = Array.from(reel.querySelectorAll("source"));
+      old.forEach((n) => n.remove());
+      reel.src = absAsset(path);
+      reel.preload = "auto";
+      reel.load();
+    };
+    const onErr = () => {
+      if (step < fallbacks.length) {
+        tryLoad(fallbacks[step++]);
+      } else {
+        reel.removeEventListener("error", onErr);
+      }
+    };
+    tryLoad(pickSrc());
+    reel.addEventListener("error", onErr, { passive: true });
+    const onResize = () => {
+      const next = pickSrc();
+      const want = absAsset(next);
+      if (reel.currentSrc && want === reel.currentSrc) return;
+      step = 0;
+      tryLoad(next);
+    };
+    if (mql.addEventListener) mql.addEventListener("change", onResize);
+    else if (mql.addListener) mql.addListener(onResize);
+  })();
+
   const ensurePlay = () => resumeBackgroundReel();
 
   let debounceT = 0;
@@ -371,9 +408,9 @@ if (reel) {
   }
   reel.addEventListener("loadeddata", () => debouncedEnsure(20));
   reel.addEventListener("canplay", () => debouncedEnsure(20));
-  reel.addEventListener("stalled", () => debouncedEnsure(280));
-  reel.addEventListener("waiting", () => debouncedEnsure(350));
-  reel.addEventListener("suspend", () => debouncedEnsure(200));
+  reel.addEventListener("stalled", () => debouncedEnsure(300));
+  reel.addEventListener("waiting", () => debouncedEnsure(400));
+  reel.addEventListener("suspend", () => debouncedEnsure(220));
   let pauseT = 0;
   reel.addEventListener("pause", () => {
     if (document.hidden) return;
@@ -381,7 +418,7 @@ if (reel) {
     clearTimeout(pauseT);
     pauseT = setTimeout(() => {
       if (!__bgReelResumeSuppressed) ensurePlay();
-    }, 100);
+    }, 250);
   });
   reel.addEventListener("ended", () => {
     reel.currentTime = 0;
@@ -398,7 +435,7 @@ if (reel) {
   let watchdog = setInterval(() => {
     if (document.hidden || __bgReelResumeSuppressed) return;
     if (reel.paused) ensurePlay();
-  }, 3000);
+  }, 6000);
   addEventListener(
     "beforeunload",
     () => {
@@ -2055,7 +2092,7 @@ function sL(l) {
     "Стас Михайлов", "Филипп Киркоров", "Джиган", "Мот", "Макс Корж", "Jony",
   ]);
   const BUB_TIER_B = new Set([
-    "Iowa", "Doni", "L\u2019one", "Limba", "Niletto", "Гуф", "Мумий Тролль",
+    "Iowa", "Doni", "L\u2019one", "L'one", "Limba", "Niletto", "Гуф", "Мумий Тролль",
   ]);
   function bubbleNameWordCount(s) {
     return String(s).trim().split(/\s+/).filter(Boolean).length;
@@ -2168,6 +2205,9 @@ function sL(l) {
     bubble.mediaSrc = src;
     if (!imageObjCache.has(src)) {
       const img = new Image();
+      if (/^https?:\/\//i.test(src) && !src.startsWith(location.origin)) {
+        img.crossOrigin = "anonymous";
+      }
       img.src = src;
       imageObjCache.set(src, img);
     }
@@ -2183,10 +2223,14 @@ function sL(l) {
   }
   resize();
   addEventListener('resize', resize);
-  canvas.addEventListener('mousemove', e => {
+  const setPointerFromClient = (clientX, clientY) => {
     const r = canvas.getBoundingClientRect();
-    bmx = e.clientX - r.left; bmy = e.clientY - r.top;
+    bmx = clientX - r.left;
+    bmy = clientY - r.top;
     pointerInside = true;
+  };
+  canvas.addEventListener('mousemove', e => {
+    setPointerFromClient(e.clientX, e.clientY);
     if (dragBubble) {
       dragBubble.x = bmx;
       dragBubble.y = bmy;
@@ -2203,11 +2247,29 @@ function sL(l) {
     }
     if (hoverBubble) ensureBubbleImage(hoverBubble);
   });
+  const onTouchPointer = (e) => {
+    if (!e.touches || !e.touches[0]) return;
+    setPointerFromClient(e.touches[0].clientX, e.touches[0].clientY);
+    if (dragBubble) {
+      dragBubble.x = bmx;
+      dragBubble.y = bmy;
+    }
+    const nextHover = pickBubble(bmx, bmy);
+    hoverBubble = nextHover;
+    if (hoverBubble) ensureBubbleImage(hoverBubble);
+  };
+  canvas.addEventListener("touchstart", onTouchPointer, { passive: true });
+  canvas.addEventListener("touchmove", onTouchPointer, { passive: true });
   canvas.addEventListener("mouseleave", () => {
     pointerInside = false;
     hoverBubble = null;
     dragBubble = null;
   });
+  canvas.addEventListener("touchend", () => {
+    pointerInside = false;
+    hoverBubble = null;
+    dragBubble = null;
+  }, { passive: true });
   canvas.addEventListener("mousedown", (e) => {
     const r = canvas.getBoundingClientRect();
     const x = e.clientX - r.left;
