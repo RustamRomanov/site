@@ -2205,9 +2205,6 @@ function sL(l) {
     bubble.mediaSrc = src;
     if (!imageObjCache.has(src)) {
       const img = new Image();
-      if (/^https?:\/\//i.test(src) && !src.startsWith(location.origin)) {
-        img.crossOrigin = "anonymous";
-      }
       img.src = src;
       imageObjCache.set(src, img);
     }
