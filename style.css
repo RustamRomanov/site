@@ -206,8 +206,10 @@ nav.s{mix-blend-mode:normal;background:rgba(9,9,9,.88);backdrop-filter:blur(14px
 .rv{opacity:1;transform:translateY(14px)}
 
 /* ═══ ARTISTS INTERLUDE ═══ */
-.artists-layer{padding:24px 0 34px;background:#1a1a1a}
-.artists-inset{position:relative;height:230px;overflow:hidden;background:#1a1a1a;box-shadow:none}
+/* Без вертикального padding — круги на canvas доходят до границы с соседними серыми секциями */
+.artists-layer{padding:0;background:#1a1a1a}
+/* Было 230px + 24+34px padding снаружи — высоту сняли в canvas, круги доходят к краю */
+.artists-inset{position:relative;height:288px;overflow:hidden;background:#1a1a1a;box-shadow:none}
 
 /* ═══ SUPER-POWER BLOCK ═══ */
 .sp-switch{padding-top:56px;padding-bottom:74px;background:#b7b7b7;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16)}
@@ -1325,7 +1327,7 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .sp-side-photo{min-height:380px;max-width:420px}
   .ab{grid-template-columns:1fr;min-height:0;padding:10px}
   .ab-photo{border-left:1px solid rgba(255,255,255,.08);min-height:420px;max-width:none}
-  .artists-inset{height:210px}
+  .artists-inset{height:268px}
   .wg5{height:320px}
   .adv{flex-basis:calc((100% - 32px)/2)}
   .logos-g{grid-template-columns:repeat(4,1fr)}
@@ -1370,7 +1372,7 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .backstage-title{font-size:clamp(3rem,16vw,6rem)}
   .bts-grid{columns:2 160px}
   .bts-viewer img{max-width:84vw}
-  .artists-inset{height:180px}
+  .artists-inset{height:238px}
 }
 
 /* No fine hover (phones / most tablets): логотипы на сетке брендов иначе не видны — только :hover. */

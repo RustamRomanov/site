@@ -2302,7 +2302,7 @@ function sL(l) {
     }
     update() {
       const rw = W / devicePixelRatio, rh = H / devicePixelRatio;
-      const pad = 8;
+      const pad = 0;
       const dx = this.x - bmx, dy = this.y - bmy;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (pointerInside && dist < 220) {
