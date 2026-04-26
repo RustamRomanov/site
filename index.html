@@ -3,6 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- GitHub Pages (project /site/): без «/» в конце URL относительные `assets/…` уезжают в корень `github.io` — ломаются фоновые логотипы в CSS и видео. -->
+<script>
+(function () {
+  var p = location.pathname;
+  var href;
+  if (/\.(html?)$/i.test(p)) {
+    href = p.slice(0, p.lastIndexOf("/") + 1);
+  } else {
+    href = p.endsWith("/") ? p : p + "/";
+  }
+  if (href.length > 1 && !href.endsWith("/")) href += "/";
+  if (href === "") href = "/";
+  var b = document.createElement("base");
+  b.href = href;
+  if (document.head) document.head.appendChild(b);
+})();
+</script>
 <title>Rustam Romanov - Director</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
