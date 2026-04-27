@@ -529,6 +529,20 @@ if (nameFxCanvas) {
     wasScattered: false,
     lastScatterAt: 0,
   };
+  let nameNoiseBuffer = null;
+
+  const getNameNoiseBuffer = (ac) => {
+    if (nameNoiseBuffer && nameNoiseBuffer.sampleRate === ac.sampleRate) return nameNoiseBuffer;
+    const dur = 0.22;
+    const len = Math.max(1, Math.floor(ac.sampleRate * dur));
+    const b = ac.createBuffer(1, len, ac.sampleRate);
+    const ch = b.getChannelData(0);
+    for (let i = 0; i < len; i += 1) {
+      ch[i] = (Math.random() * 2 - 1) * (0.35 + Math.random() * 0.65);
+    }
+    nameNoiseBuffer = b;
+    return b;
+  };
 
   const playNameFxTone = async (kind, velocity = 0) => {
     const now = performance.now();
@@ -549,9 +563,13 @@ if (nameFxCanvas) {
     const osc = ac.createOscillator();
     const gain = ac.createGain();
     const filter = ac.createBiquadFilter();
+    const noise = ac.createBufferSource();
+    const noiseGain = ac.createGain();
+    const noiseFilter = ac.createBiquadFilter();
     const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
     const pan = Math.max(-1, Math.min(1, pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1));
     const speedBoost = Math.min(0.35, velocity * 0.018);
+    noise.buffer = getNameNoiseBuffer(ac);
 
     if (kind === "scatter") {
       osc.type = "triangle";
@@ -562,16 +580,27 @@ if (nameFxCanvas) {
       gain.gain.setValueAtTime(0.0001, t0);
       gain.gain.exponentialRampToValueAtTime(0.028 + speedBoost, t0 + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12);
+      noiseFilter.type = "highpass";
+      noiseFilter.frequency.setValueAtTime(900, t0);
+      noiseGain.gain.setValueAtTime(0.0001, t0);
+      noiseGain.gain.exponentialRampToValueAtTime(0.04 + speedBoost * 0.7, t0 + 0.014);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.11);
     } else if (kind === "active") {
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(340, t0);
-      osc.frequency.exponentialRampToValueAtTime(430 + velocity * 3, t0 + 0.045);
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(300, t0);
+      osc.frequency.exponentialRampToValueAtTime(390 + velocity * 2, t0 + 0.05);
       filter.type = "bandpass";
-      filter.frequency.setValueAtTime(650, t0);
-      filter.Q.setValueAtTime(1.6, t0);
+      filter.frequency.setValueAtTime(520, t0);
+      filter.Q.setValueAtTime(1.2, t0);
       gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(0.014 + speedBoost * 0.7, t0 + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.012 + speedBoost * 0.55, t0 + 0.012);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.075);
+      noiseFilter.type = "bandpass";
+      noiseFilter.frequency.setValueAtTime(1600, t0);
+      noiseFilter.Q.setValueAtTime(0.75, t0);
+      noiseGain.gain.setValueAtTime(0.0001, t0);
+      noiseGain.gain.exponentialRampToValueAtTime(0.022 + speedBoost * 0.45, t0 + 0.012);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.08);
     } else {
       osc.type = "sine";
       osc.frequency.setValueAtTime(460, t0);
@@ -581,16 +610,27 @@ if (nameFxCanvas) {
       gain.gain.setValueAtTime(0.0001, t0);
       gain.gain.exponentialRampToValueAtTime(0.022, t0 + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
+      noiseFilter.type = "bandpass";
+      noiseFilter.frequency.setValueAtTime(760, t0);
+      noiseFilter.Q.setValueAtTime(0.9, t0);
+      noiseGain.gain.setValueAtTime(0.0001, t0);
+      noiseGain.gain.exponentialRampToValueAtTime(0.028, t0 + 0.02);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.17);
     }
 
     if (panNode) {
       panNode.pan.setValueAtTime(pan, t0);
       osc.connect(filter).connect(gain).connect(panNode).connect(ac.destination);
+      noise.connect(noiseFilter).connect(noiseGain).connect(panNode).connect(ac.destination);
     } else {
       osc.connect(filter).connect(gain).connect(ac.destination);
+      noise.connect(noiseFilter).connect(noiseGain).connect(ac.destination);
     }
     osc.start(t0);
-    osc.stop(t0 + (kind === "gather" ? 0.17 : 0.13));
+    const stopAt = t0 + (kind === "gather" ? 0.17 : 0.13);
+    noise.start(t0);
+    osc.stop(stopAt);
+    noise.stop(stopAt);
   };
 
   function buildNameParticles() {
