@@ -219,7 +219,15 @@ nav.s{mix-blend-mode:normal;background:rgba(9,9,9,.64);backdrop-filter:blur(14px
 /* Без вертикального padding — круги на canvas доходят до границы с соседними серыми секциями */
 .artists-layer{padding:0;background:#1a1a1a}
 /* Было 230px + 24+34px padding снаружи — высоту сняли в canvas, круги доходят к краю */
-.artists-inset{position:relative;height:288px;overflow:hidden;background:#1a1a1a;box-shadow:none}
+.artists-inset{position:relative;height:288px;overflow:visible;background:#1a1a1a;box-shadow:none}
+#bcanvas{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:calc(var(--artists-bleed,0px) * -1);
+  width:calc(100% + var(--artists-bleed,0px) * 2);
+  height:100%;
+}
 
 /* ═══ SUPER-POWER BLOCK ═══ */
 .sp-switch{padding-top:56px;padding-bottom:74px;background:#b7b7b7;border-top:none;border-bottom:none}

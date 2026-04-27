@@ -2730,6 +2730,7 @@ function sL(l) {
   const canvas = document.getElementById('bcanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const ARTISTS_BLEED = 56;
   let W, H;
   let bmx = 0, bmy = 0, pointerInside = false;
   let hoverBubble = null;
@@ -2891,9 +2892,10 @@ function sL(l) {
 
   function resize() {
     const r = canvas.parentElement.getBoundingClientRect();
-    W = canvas.width = r.width * devicePixelRatio;
+    canvas.style.setProperty("--artists-bleed", `${ARTISTS_BLEED}px`);
+    W = canvas.width = (r.width + ARTISTS_BLEED * 2) * devicePixelRatio;
     H = canvas.height = r.height * devicePixelRatio;
-    canvas.style.width = r.width + 'px';
+    canvas.style.width = (r.width + ARTISTS_BLEED * 2) + 'px';
     canvas.style.height = r.height + 'px';
     ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   }
