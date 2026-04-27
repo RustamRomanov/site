@@ -1362,7 +1362,17 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .showreel-cta{align-self:stretch;justify-content:center;flex:1 0 100%;padding:0 var(--hero-btn-pad);width:100%;margin-left:0;display:flex}
   .showreel-cta .showreel-btn{width:100%;max-width:100%;border-radius:8px}
   .intro-hero{margin-top:190px}
-  .intro-slogan-block{padding-left:0;gap:10px;margin-top:0;margin-bottom:4px}
+  .intro-slogan-block{
+    position:fixed;
+    top:8px;
+    left:8px;
+    z-index:1200;
+    padding-left:0;
+    gap:10px;
+    margin-top:0;
+    margin-bottom:0;
+    width:auto;
+  }
   .intro-slogan-block .ir-oneline.ir{
     margin:18px 0 0 2px;
     font-size:clamp(0.46rem,2.45vw,0.68rem);
