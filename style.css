@@ -175,6 +175,7 @@ nav.s{mix-blend-mode:normal;background:rgba(9,9,9,.64);backdrop-filter:blur(14px
 .lng b.on{opacity:1}
 .nav-burger{display:none}
 .nav-mobile{display:none}
+.hero-scroll-cue{display:none}
 
 /* ═══ INTRO ═══ */
 .intro{position:relative;min-height:max(620px,var(--app-vh,100dvh));overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 40px 40px}
@@ -1427,21 +1428,16 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .istat:nth-of-type(1),.istat:nth-of-type(2),.istat:nth-of-type(3),.istat:nth-of-type(4){flex:0 0 auto}
   #intro-stats{row-gap:8px;column-gap:8px;display:grid;grid-template-columns:1fr 1fr;align-items:center;width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);padding:0 var(--hero-btn-pad)}
   #intro-stats .istat{width:100%;justify-content:center}
-  #intro-stats .icue{
-    order:90;
-    position:fixed !important;
-    top:0 !important;
-    right:0 !important;
-    left:auto !important;
-    bottom:auto !important;
-    margin:0 !important;
-    z-index:1200 !important;
-    justify-self:auto;
+  .hero-scroll-cue{
+    display:flex;
+    position:fixed;
+    top:34px;
+    right:10px;
+    z-index:1300;
     align-items:center;
     gap:5px;
-    transform:none !important;
   }
-  #intro-stats .icue-l{height:22px}
+  .hero-scroll-cue .icue-l{height:22px}
   #intro-stats .showreel-cta{order:99;grid-column:1 / -1;width:100%;margin-top:-2px;padding:0}
   .ifoot{margin-top:auto;width:100%;padding-bottom:10px}
   .sp-block{padding:14px}
