@@ -1361,7 +1361,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .showreel-btn{font-size:1rem;letter-spacing:0.14em;padding:13px 34px;min-height:0;white-space:normal;text-align:center;line-height:1.2}
   .showreel-cta{align-self:stretch;justify-content:center;flex:1 0 100%;padding:0 var(--hero-btn-pad);width:100%;margin-left:0;display:flex}
   .showreel-cta .showreel-btn{width:100%;max-width:100%;border-radius:8px}
-  .intro-hero{margin-top:0;align-self:stretch}
+  .intro-hero{margin-top:0;align-self:stretch;transform:translateY(152px)}
   .intro-slogan-block{
     position:relative;
     top:auto;
@@ -1415,7 +1415,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .bts-viewer img{max-width:92vw;max-height:82vh}
   .hdr{flex-wrap:wrap;gap:12px}
   footer{flex-direction:column;gap:10px;text-align:center}
-  .iname{height:236px;margin-top:0}
+  .iname{height:236px;margin-top:0;transform:translateY(152px)}
   .ist{gap:8px;font-size:.66rem}
   .istat{padding:7px 10px}
   .istat em{white-space:nowrap}
