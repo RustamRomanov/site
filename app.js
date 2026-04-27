@@ -757,8 +757,8 @@ if (btsTitleWrap && btsTitleCanvas && btsTitleBtn) {
   const WAVE_STEP = 90;
   const WAVE_PERIOD_MIN = 2200;
   const WAVE_PERIOD_MAX = 3800;
-  const BASE_TILE_W = 104;
-  const BASE_TILE_H = 62;
+  const BASE_TILE_W = 312;
+  const BASE_TILE_H = 186;
   const btsShuffledIdx = (() => {
     const arr = BACKSTAGE_IMAGES.map((_, i) => i);
     for (let i = arr.length - 1; i > 0; i -= 1) {
