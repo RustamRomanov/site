@@ -174,7 +174,7 @@ nav.s{mix-blend-mode:normal;background:rgba(9,9,9,.88);backdrop-filter:blur(14px
 .lng b.on{opacity:1}
 
 /* ═══ INTRO ═══ */
-.intro{position:relative;min-height:max(620px,100vh);min-height:max(620px,100dvh);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 40px 40px}
+.intro{position:relative;min-height:max(620px,var(--app-vh,100dvh));overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 40px 40px}
 .intro-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 .intro-bg video{position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;pointer-events:none}
 .intro-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(9,9,9,.22) 0,rgba(9,9,9,.02) 25%,rgba(9,9,9,.72) 78%,var(--ink) 100%)}

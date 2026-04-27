@@ -20,46 +20,30 @@ function absAsset(rel) {
   }
 }
 
+// Background hero video may start only after startup loader hides.
+let __bgReelCanPlay = false;
+
 function initStartupLoader() {
   const loader = document.getElementById("startup-loader");
   if (!loader) return;
   document.body.classList.add("is-loading");
 
-  const minMs = 3000; // strict 3s as requested
+  const minMs = 2000;
   let minDone = false;
   let pageDone = document.readyState === "complete";
-  let reelReady = false;
   let released = false;
 
-  const isReelPlaying = () => {
-    const reel = document.getElementById("reel");
-    if (!reel) return false;
-    return !reel.paused && reel.readyState >= 2 && reel.currentTime > 0.04;
-  };
-
-  const pokeReelPlay = () => {
-    const reel = document.getElementById("reel");
-    if (!reel) return;
-    reel.muted = true;
-    const p = reel.play();
-    if (p) p.catch(() => {});
-  };
-
   const release = () => {
-    if (released || !minDone || !pageDone || !reelReady) return;
+    if (released || !minDone || !pageDone) return;
     released = true;
     loader.classList.add("is-hidden");
     setTimeout(() => {
       loader.remove();
       document.body.classList.remove("is-loading");
+      __bgReelCanPlay = true;
+      resumeBackgroundReel();
     }, 520);
   };
-
-  const poll = setInterval(() => {
-    if (!reelReady) reelReady = isReelPlaying();
-    if (!reelReady) pokeReelPlay();
-    release();
-  }, 220);
 
   setTimeout(() => {
     minDone = true;
@@ -75,24 +59,31 @@ function initStartupLoader() {
     { once: true },
   );
 
-  // Safety valve: if some browser keeps video in paused/blocked state, do not freeze startup forever.
+  // Safety valve: do not block loader forever on hanging resources.
   setTimeout(() => {
-    reelReady = true;
     pageDone = true;
     minDone = true;
     release();
   }, 9000);
-
-  addEventListener("beforeunload", () => clearInterval(poll), { once: true });
 }
 
 initStartupLoader();
+
+// Browser-window adaptive vars for better desktop responsiveness.
+function syncViewportVars() {
+  const root = document.documentElement;
+  root.style.setProperty("--app-vh", `${window.innerHeight}px`);
+  root.style.setProperty("--app-vw", `${window.innerWidth}px`);
+}
+syncViewportVars();
+addEventListener("resize", syncViewportVars, { passive: true });
+addEventListener("orientationchange", syncViewportVars, { passive: true });
 
 /** When true, #reel (hero bg) is intentionally not auto-resumed — e.g. showreel modal plays with sound and Chrome would fight pause/play loops. */
 let __bgReelResumeSuppressed = false;
 function resumeBackgroundReel() {
   const el = document.getElementById("reel");
-  if (!el || document.hidden || __bgReelResumeSuppressed) return;
+  if (!el || document.hidden || __bgReelResumeSuppressed || !__bgReelCanPlay) return;
   el.muted = true;
   if (el.paused) {
     const p = el.play();
@@ -526,7 +517,7 @@ if (nameFxCanvas) {
   const lines = ["RUSTAM", "ROMANOV"];
   const particles = [];
   const pointer = { x: -9999, y: -9999, px: -9999, py: -9999, vx: 0, vy: 0, active: false };
-  const repelRadius = 78;
+  const repelRadius = 188;
   const repelStrength = 2.85;
 
   function buildNameParticles() {
