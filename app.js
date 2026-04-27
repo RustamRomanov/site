@@ -528,6 +528,7 @@ if (nameFxCanvas) {
     wasActive: false,
     wasScattered: false,
     lastScatterAt: 0,
+    lastMoveToneAt: 0,
   };
   const NAME_FX_AUDIO_MODE = "light-bubbly"; // off | light-bubbly | hiss
   let namePointerLastMoveAt = 0;
@@ -635,7 +636,7 @@ if (nameFxCanvas) {
     const now = performance.now();
     const minGap =
       kind === "scatter" ? 120 :
-      kind === "active" ? 140 :
+      kind === "active" ? 90 :
       kind === "gather" ? 220 : 180;
     if (now - nameSfx.lastAt < minGap) return;
     nameSfx.lastAt = now;
@@ -665,8 +666,11 @@ if (nameFxCanvas) {
       const bp = ac.createBiquadFilter();
       const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
       const vel = Math.min(1, velocity / 2.2);
-      const base = kind === "gather" ? 380 : 520 + vel * 180;
-      const dur = kind === "gather" ? 0.3 : 0.22;
+      const base =
+        kind === "gather" ? 380 :
+        kind === "active" ? 560 + vel * 220 :
+        520 + vel * 180;
+      const dur = kind === "gather" ? 0.3 : kind === "active" ? 0.2 : 0.22;
       hp.type = "highpass";
       hp.frequency.setValueAtTime(420, t0);
       bp.type = "bandpass";
@@ -956,6 +960,13 @@ if (nameFxCanvas) {
       nameSfx.lastScatterAt = performance.now();
     }
     const movingNow = performance.now() - namePointerLastMoveAt < 55 && pointerSpeed > 0.14;
+    if (NAME_FX_AUDIO_MODE === "light-bubbly" && pointer.active && movingNow) {
+      const nowMs = performance.now();
+      if (nowMs - nameSfx.lastMoveToneAt > 95) {
+        nameSfx.lastMoveToneAt = nowMs;
+        void playNameFxTone("active", pointerSpeed);
+      }
+    }
     const hissIntensity = pointer.active && movingNow ? Math.min(1, avgDisplacement / 2.4) : 0;
     const hissPan = pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1;
     if (hissIntensity > 0.02) void updateNameHiss(hissIntensity, hissPan, pointerSpeed, t);
