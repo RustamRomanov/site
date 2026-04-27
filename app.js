@@ -169,6 +169,23 @@ const INTRO_BG = {
   desktop: "assets/video/showreelback.mp4",
   mobile: "assets/video/showreelbackmobile.mp4",
 };
+const MOBILE_TOP_ARTISTS = [
+  "Тимати",
+  "Филипп Киркоров",
+  "Стас Михайлов",
+  "Егор Крид",
+  "Джиган",
+  "Макс Корж",
+  "Мот",
+  "Jony",
+  "Даня Милохин",
+  "Натали",
+  "Люся Чеботина",
+  "Niletto",
+  "Iowa",
+  "Мумий Тролль",
+  "Гуф",
+];
 const BACKSTAGE_IMAGES = [
   "bts-01.png", "bts-02.png", "bts-03.png", "bts-04.png", "bts-05.png", "bts-06.png",
   "bts-07.png", "bts-08.png", "bts-09.png", "bts-10.png", "bts-11.png", "bts-12.png",
@@ -392,35 +409,6 @@ addEventListener(
   },
   { passive: true },
 );
-
-// ═══ MOBILE NAV ═══
-(() => {
-  const nav = document.getElementById("nav");
-  const burger = document.getElementById("nav-burger");
-  const mobile = document.getElementById("nav-mobile");
-  if (!nav || !burger || !mobile) return;
-  const mq = window.matchMedia("(max-width: 720px)");
-
-  const closeMenu = () => {
-    nav.classList.remove("m-open");
-    burger.setAttribute("aria-expanded", "false");
-    mobile.setAttribute("aria-hidden", "true");
-  };
-  const openMenu = () => {
-    nav.classList.add("m-open");
-    burger.setAttribute("aria-expanded", "true");
-    mobile.setAttribute("aria-hidden", "false");
-  };
-  const toggleMenu = () => {
-    if (nav.classList.contains("m-open")) closeMenu();
-    else openMenu();
-  };
-
-  burger.addEventListener("click", toggleMenu);
-  mobile.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
-  addEventListener("resize", () => { if (!mq.matches) closeMenu(); }, { passive: true });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
-})();
 
 // ═══ INTRO ANIMATION + VIDEO + NAME FX ═══
 const reel = document.getElementById("reel");
@@ -1043,7 +1031,8 @@ if (nameFxCanvas) {
     // Same kerning/scale. First line is near the top of the buffer — we never shift the block *up* to
     // “fit” the second line; that is what was flattening the first R. Use the full line’s
     // actualBoundingBoxAscent so the first line’s cap isn’t in the subpixel/alpha no‑man’s land.
-    const fontSize = Math.min(rect.width * 0.22, rect.height * 0.46);
+    const isMobileName = window.matchMedia("(max-width: 720px)").matches;
+    const fontSize = Math.min(rect.width * (isMobileName ? 0.185 : 0.22), rect.height * 0.46);
     const startX = Math.max(rect.width * 0.01, 6);
     const lineGap = fontSize * 0.86;
     offCtx.font = `400 ${fontSize}px Cormorant Garamond`;
@@ -1769,8 +1758,9 @@ if (wgrid) {
   document.body.appendChild(focusLayer);
 
   const ctx = canvas.getContext("2d");
-  const BASE_TILE_W = 92;
-  const BASE_TILE_H = 52;
+  const isMobileMosaic = window.matchMedia("(max-width: 720px)").matches;
+  const BASE_TILE_W = isMobileMosaic ? 84 : 92;
+  const BASE_TILE_H = isMobileMosaic ? 48 : 52;
   // Cursor tile: strongest scale, then each next ring gets half of previous gain.
   const CENTER_SCALE = 2.6;
   const RING1_SCALE = 1 + (CENTER_SCALE - 1) * 0.5;
@@ -2238,6 +2228,35 @@ if (wgrid) {
     }
   };
   wgrid.addEventListener("mousemove", onMove, { passive: true });
+  wgrid.addEventListener(
+    "touchstart",
+    (e) => {
+      if (!e.touches?.[0]) return;
+      const rect = wgrid.getBoundingClientRect();
+      pointer.x = e.touches[0].clientX - rect.left;
+      pointer.y = e.touches[0].clientY - rect.top;
+    },
+    { passive: true },
+  );
+  wgrid.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!e.touches?.[0]) return;
+      const rect = wgrid.getBoundingClientRect();
+      pointer.x = e.touches[0].clientX - rect.left;
+      pointer.y = e.touches[0].clientY - rect.top;
+    },
+    { passive: true },
+  );
+  wgrid.addEventListener(
+    "touchend",
+    () => {
+      pointer.x = -1e6;
+      pointer.y = -1e6;
+      sound.lastId = -1;
+    },
+    { passive: true },
+  );
   wgrid.addEventListener("mouseleave", onLeave, { passive: true });
   wgrid.addEventListener("click", onClick);
   navPrev.addEventListener("click", onNavPrev);
@@ -2707,10 +2726,9 @@ function sL(l) {
   let dragBubble = null;
   const imageCache = new Map();
   const imageObjCache = new Map();
-  const all = [
-    ...ARTISTS.map((a) => ({ text: a, lab: false, media: artistMediaRef(a) })),
-    ...LABELS.map((l) => ({ text: l, lab: true, media: labelMediaRef(l) })),
-  ];
+  const isMobileBubbles = window.matchMedia("(max-width: 720px)").matches;
+  const artistPool = isMobileBubbles ? MOBILE_TOP_ARTISTS : ARTISTS;
+  const all = artistPool.map((a) => ({ text: a, lab: false, media: artistMediaRef(a) }));
 
   // Bubble radii: labels −20% vs original; top artists = label size; next tier a bit smaller; default unchanged; multi-word default tier slightly larger.
   const BUB_R_LAB_MIN = 42 * 0.8;
@@ -3062,7 +3080,7 @@ function sL(l) {
 
   // Warm up a subset of artist/label images in idle time so circles show photos faster.
   const warmupBubbleMedia = () => {
-    const targets = bubbles.slice(0, Math.min(26, bubbles.length));
+    const targets = bubbles.slice(0, Math.min(isMobileBubbles ? 15 : 26, bubbles.length));
     let i = 0;
     const pump = () => {
       const end = Math.min(i + 2, targets.length);

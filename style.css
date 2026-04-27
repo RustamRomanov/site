@@ -1353,12 +1353,12 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .intro-slogan-block{padding-left:0;gap:20px}
   .intro-slogan-block .ir-oneline.ir{
     margin:18px 0 0 2px;
-    font-size:clamp(0.52rem,3.2vw,0.8rem);
-    letter-spacing:clamp(0.08em,0.4vw,0.28em);
+    font-size:clamp(0.46rem,2.45vw,0.68rem);
+    letter-spacing:clamp(0.05em,0.24vw,0.16em);
   }
   .showreel-bubble-wrap,.showreel-bubble{width:100%}
   .showreel-pause{left:10px;bottom:10px;min-width:44px;min-height:44px}
-  .wg5{height:270px}
+  .wg5{height:430px}
   .works-nav{width:50px;height:50px}
   .works-nav span{font-size:1.86rem}
   .adv{flex-basis:100%}
@@ -1384,47 +1384,7 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .nm{margin-left:auto;gap:10px}
   .lng{margin-left:0;padding-left:10px;border-left:1px solid rgba(255,255,255,.12)}
   .lng b{font-size:.48rem}
-  .nav-burger{
-    display:inline-flex;
-    margin-left:auto;
-    width:40px;
-    height:40px;
-    border:1px solid rgba(255,255,255,.2);
-    border-radius:8px;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    flex-direction:column;
-    cursor:pointer;
-    background:rgba(0,0,0,.32);
-  }
-  .nav-burger span{width:17px;height:1px;background:#fff;display:block;opacity:.9}
-  .nav-mobile{
-    display:grid;
-    width:100%;
-    gap:0;
-    margin-top:4px;
-    border:1px solid rgba(255,255,255,.12);
-    background:rgba(8,8,8,.94);
-    max-height:0;
-    overflow:hidden;
-    opacity:0;
-    transform:translateY(-6px);
-    transition:max-height .24s ease,opacity .24s ease,transform .24s ease;
-  }
-  nav.m-open .nav-mobile{max-height:340px;opacity:1;transform:translateY(0)}
-  .nav-mobile a{
-    display:block;
-    padding:11px 14px;
-    border-bottom:1px solid rgba(255,255,255,.08);
-    font-family:var(--font-ui);
-    font-size:.58rem;
-    letter-spacing:.16em;
-    text-transform:uppercase;
-    color:#fff;
-    opacity:.9;
-  }
-  .nav-mobile a:last-child{border-bottom:none}
+  .nav-burger,.nav-mobile{display:none !important}
   .showreel-modal{padding:12px}
   .showreel-modal-close{top:6px;right:8px}
   .bts-wrap{width:94vw;max-height:90vh;padding:16px 0}
@@ -1433,25 +1393,34 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .bts-viewer img{max-width:92vw;max-height:82vh}
   .hdr{flex-wrap:wrap;gap:12px}
   footer{flex-direction:column;gap:10px;text-align:center}
-  .iname{height:270px}
+  .iname{height:236px}
   .ist{gap:8px;font-size:.72rem}
   .istat{padding:7px 10px}
+  .istat:nth-child(1),.istat:nth-child(2){flex:0 0 calc(50% - 6px)}
+  #intro-stats{row-gap:8px}
   .sp-block{padding:14px}
+  .sp-switch{padding-top:34px;padding-bottom:36px}
+  .sp-side-photo{min-height:280px}
   .power-item{grid-template-columns:26px 1fr;padding:8px 0}
   .power-item p{font-size:.9rem}
   .backstage-title{font-size:clamp(3rem,16vw,6rem)}
   .bts-grid{columns:2 160px}
   .bts-viewer img{max-width:84vw}
   .artists-inset{height:238px}
+  .logos-g{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .logo-c{padding:14px 8px;min-height:56px}
+  .logo-c span{font-size:.5rem;letter-spacing:.16em;white-space:normal}
+  .ab{gap:0}
+  .ab-photo{margin-top:0}
 }
 
 /* No fine hover (phones / most tablets): логотипы на сетке брендов иначе не видны — только :hover. */
 @media (hover: none), (pointer: coarse) {
   .logos-g .logo-c[class*="logo-"]::after {
-    opacity: 0.5;
+    opacity: 0;
   }
   .logos-g .logo-c[class*="logo-"] span {
-    opacity: 0.4;
+    opacity: 1;
   }
   .logos-g .logo-c[class*="logo-"]:active::after,
   .logos-g .logo-c[class*="logo-"]:focus-visible::after {
