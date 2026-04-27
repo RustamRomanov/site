@@ -271,6 +271,8 @@ const unlockSiteAudio = async () => {
 document.addEventListener("pointerdown", () => void unlockSiteAudio(), { capture: true, passive: true });
 document.addEventListener("pointermove", () => void unlockSiteAudio(), { once: true, capture: true, passive: true });
 document.addEventListener("touchstart", () => void unlockSiteAudio(), { capture: true, passive: true });
+document.addEventListener("mousedown", () => void unlockSiteAudio(), { capture: true, passive: true });
+document.addEventListener("keydown", () => void unlockSiteAudio(), { once: true, capture: true });
 
 const playUiTick = async (key = "ui", pan = 0, tone = 1) => {
   const now = performance.now();
@@ -344,6 +346,7 @@ addEventListener(
 const reel = document.getElementById("reel");
 if (reel) {
   reel.loop = true;
+  reel.poster = absAsset("assets/img/img1.jpg");
   reel.muted = true;
   reel.defaultMuted = true;
   reel.setAttribute("playsinline", "");
@@ -2177,8 +2180,13 @@ function sL(l) {
 
     if (ref.type === "label") {
       const out = absAsset(ref.src);
-      imageCache.set(key, out);
-      return out;
+      if (await canLoadImage(out)) {
+        imageCache.set(key, out);
+        return out;
+      }
+      const localLabelFallback = absAsset("assets/img/portrait-dark.jpg");
+      imageCache.set(key, localLabelFallback);
+      return localLabelFallback;
     }
 
     if (ref.type === "artist") {
@@ -2199,8 +2207,13 @@ function sL(l) {
         } catch {}
       }
       const fallback = absAsset(ref.fallback || "assets/img/portrait-suit1.jpg");
-      imageCache.set(key, fallback);
-      return fallback;
+      if (await canLoadImage(fallback)) {
+        imageCache.set(key, fallback);
+        return fallback;
+      }
+      const localFallback = absAsset("assets/img/portrait-suit1.jpg");
+      imageCache.set(key, localFallback);
+      return localFallback;
     }
 
     return absAsset("assets/img/portrait-dark.jpg");
