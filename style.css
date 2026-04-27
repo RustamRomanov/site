@@ -1406,10 +1406,10 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .ist{gap:8px;font-size:.66rem}
   .istat{padding:7px 10px}
   .istat em{white-space:nowrap}
-  .istat:nth-of-type(1),.istat:nth-of-type(2){flex:0 0 calc(50% - 6px)}
-  #intro-stats{row-gap:8px;display:flex;flex-wrap:wrap}
-  #intro-stats .icue{order:90;flex:0 0 100%;align-items:center;gap:2px}
-  #intro-stats .icue-l{height:24px}
+  .istat:nth-of-type(1),.istat:nth-of-type(2){flex:0 0 auto}
+  #intro-stats{row-gap:8px;display:flex;flex-wrap:wrap;align-items:center}
+  #intro-stats .icue{order:90;flex:0 0 auto;align-items:flex-end;gap:2px;margin-left:auto}
+  #intro-stats .icue-l{height:26px}
   #intro-stats .showreel-cta{order:99;width:100%}
   .sp-block{padding:14px}
   .sp-switch{padding-top:24px;padding-bottom:20px}
