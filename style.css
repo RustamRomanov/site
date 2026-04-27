@@ -1382,7 +1382,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
     letter-spacing:clamp(0.02em,0.2vw,0.1em);
     width:100%;
     text-align:left;
-    padding:0;
+    padding:0 0 0 7mm;
     display:block;
   }
   .showreel-bubble-wrap,.showreel-bubble{width:100%}
