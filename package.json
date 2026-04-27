@@ -1,5 +1,4 @@
-cd ~/site
-echo '{
+{
   "name": "site",
   "version": "1.0.0",
   "scripts": {
@@ -8,4 +7,4 @@ echo '{
   "dependencies": {
     "serve": "^14.0.0"
   }
-}' > package.json
+}
