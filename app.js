@@ -529,7 +529,7 @@ if (nameFxCanvas) {
     wasScattered: false,
     lastScatterAt: 0,
   };
-  const NAME_FX_AUDIO_MODE = "light-bubbly"; // off | light-bubbly | hiss
+  const NAME_FX_AUDIO_MODE = "hiss"; // off | light-bubbly | hiss
   let namePointerLastMoveAt = 0;
   let nameNoiseBuffer = null;
   const nameHiss = {
