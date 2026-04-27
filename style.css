@@ -189,6 +189,7 @@ nav.s{mix-blend-mode:normal;background:rgba(9,9,9,.64);backdrop-filter:blur(14px
   font-size:clamp(0.58rem,1.8vw,0.85rem);
   letter-spacing:clamp(0.12em,0.35vw,0.3em);
 }
+.intro-slogan-block .ir-oneline.ir .ir-line{display:block}
 /* overflow visible: particle repel and antialiased name edges must not be clipped at the h1 box */
 /* Taller than before so first-line caps + line gap + descenders always fit; overflow visible for particles */
 .iname{position:relative;height:clamp(250px,44vh,520px);margin-bottom:12px;white-space:nowrap;overflow:visible}
