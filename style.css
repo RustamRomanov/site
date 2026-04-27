@@ -1462,7 +1462,10 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .ab-photo{margin-top:0;box-shadow:none}
   .ab-photo img{width:100%;height:auto;max-height:none;object-fit:cover;object-position:center bottom;transform:none}
   #ads{padding-top:30px;padding-bottom:34px}
+  #ads .W{max-width:none}
+  #ads .advs-slider{width:100vw;max-width:100vw;margin-left:calc(50% - 50vw)}
   .advs{gap:14px}
+  .advs-viewport{padding:0}
   .adv-p{aspect-ratio:16/10}
 }
 

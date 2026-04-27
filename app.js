@@ -2414,7 +2414,7 @@ ADS.forEach((a, i) => {
     let downCardId = "";
     let raf = 0;
     let last = 0;
-    const SPEED = 0.052; // px/ms
+    const SPEED = 0.03; // px/ms
     const normalize = () => {
       if (!singleWidth) return;
       if (viewport.scrollLeft >= singleWidth) viewport.scrollLeft -= singleWidth;
