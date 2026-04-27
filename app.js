@@ -931,10 +931,8 @@ if (nameFxCanvas) {
     return { ac };
   };
 
-  const updateNameWarp = async (scatter, motion, panNorm) => {
-    const state = await ensureNameWarp();
-    if (!state || !nameWarp.running || !nameWarp.main || !nameWarp.mainGain) return;
-    const ac = state.ac;
+  const updateNameWarpSync = (ac, scatter, motion, panNorm) => {
+    if (!nameWarp.running || !nameWarp.main || !nameWarp.mainGain) return;
     const t = ac.currentTime;
     const s = Math.max(0, Math.min(1, scatter));
     const m = Math.max(0, Math.min(1, motion));
@@ -1094,6 +1092,7 @@ if (nameFxCanvas) {
     const speedBoost = 1 + Math.min(0.7, ptrSpeed * 0.12);
 
     let displacementAcc = 0;
+    let kineticAcc = 0;
     particles.forEach((p) => {
       if (pointer.active) {
         const dx = p.x - pointer.x;
@@ -1118,6 +1117,7 @@ if (nameFxCanvas) {
       p.vy *= 0.84;
       p.x += p.vx;
       p.y += p.vy;
+      kineticAcc += Math.hypot(p.vx, p.vy);
 
       const displacement = Math.hypot(p.x - p.x0, p.y - p.y0);
       displacementAcc += displacement;
@@ -1133,6 +1133,7 @@ if (nameFxCanvas) {
     });
 
     const avgDisplacement = particles.length ? displacementAcc / particles.length : 0;
+    const avgKinetic = particles.length ? kineticAcc / particles.length : 0;
     const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
     if (pointer.active && !nameSfx.wasActive) {
       nameSfx.wasActive = true;
@@ -1144,11 +1145,17 @@ if (nameFxCanvas) {
     }
     const movingNow = performance.now() - namePointerLastMoveAt < 55 && pointerSpeed > 0.14;
     if (NAME_FX_AUDIO_MODE === "light-bubbly") {
-      const scatterSync = Math.max(0, Math.min(1, (avgDisplacement - 0.35) / 2.1));
-      const motionSync = movingNow ? Math.max(0, Math.min(1, pointerSpeed / 2.2)) : 0;
+      if (pointer.active && (movingNow || avgKinetic > 0.06)) void ensureNameWarp();
+      const scatterSync = Math.max(0, Math.min(1, (avgKinetic - 0.045) / 0.62));
+      const motionSync = Math.max(0, Math.min(1, pointerSpeed / 2.4));
       const syncPan = pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1;
-      if (scatterSync > 0.01) void updateNameWarp(scatterSync, motionSync, syncPan);
-      else void stopNameWarp();
+      if (nameWarp.running) {
+        getUiAudio().then((ac) => {
+          if (!ac || ac.state !== "running") return;
+          if (scatterSync > 0.008) updateNameWarpSync(ac, scatterSync, motionSync, syncPan);
+          else void stopNameWarp();
+        });
+      }
     }
     const hissIntensity = pointer.active && movingNow ? Math.min(1, avgDisplacement / 2.4) : 0;
     const hissPan = pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1;
