@@ -95,20 +95,8 @@ function resumeBackgroundReel() {
   }
 }
 
-// Always start from top on page reload/open.
-if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-const forceTopStart = () => {
-  if (location.hash) {
-    history.replaceState(null, "", location.pathname + location.search);
-  }
-  window.scrollTo(0, 0);
-};
-addEventListener("DOMContentLoaded", forceTopStart);
-addEventListener("load", () => {
-  forceTopStart();
-  requestAnimationFrame(() => window.scrollTo(0, 0));
-});
-addEventListener("pageshow", forceTopStart);
+// Keep native scroll behavior to avoid jump-to-top during late resource loading.
+if ("scrollRestoration" in history) history.scrollRestoration = "auto";
 
 // ═══ DATA ═══
 const TOP5 = [
