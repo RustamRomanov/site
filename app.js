@@ -48,7 +48,7 @@ function initStartupLoader() {
         resumeBackgroundReel();
         if (tries >= 18) clearInterval(kick);
       }, 150);
-    }, 520);
+    }, 160);
   };
 
   setTimeout(() => {
@@ -415,6 +415,18 @@ if (reel) {
   reel.setAttribute("playsinline", "");
   reel.setAttribute("webkit-playsinline", "");
   if ("playsInline" in reel) reel.playsInline = true;
+  // Skip problematic static first frame so motion is visible right after loader.
+  let reelLiveFrameShifted = false;
+  const shiftReelToLiveFrame = () => {
+    if (reelLiveFrameShifted) return;
+    if (reel.readyState < 1) return;
+    try {
+      if (reel.currentTime < 0.12) reel.currentTime = 0.12;
+      reelLiveFrameShifted = true;
+    } catch (_) {}
+  };
+  reel.addEventListener("loadedmetadata", shiftReelToLiveFrame, { once: true });
+  reel.addEventListener("playing", shiftReelToLiveFrame, { once: true });
 
   (function initHeroBackgroundVideo() {
     const mql = window.matchMedia("(max-width: 720px)");
