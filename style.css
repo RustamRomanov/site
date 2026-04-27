@@ -1422,7 +1422,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .bts-viewer img{max-width:92vw;max-height:82vh}
   .hdr{flex-wrap:wrap;gap:12px}
   footer{flex-direction:column;gap:10px;text-align:center}
-  .iname{height:236px;margin-top:0;transform:translate(-3mm,calc(194px + 10mm))}
+  .iname{height:236px;margin-top:0;transform:translate(1mm,calc(194px + 10mm))}
   .ist{gap:8px;font-size:.66rem}
   .istat{padding:7px 10px}
   .istat em{white-space:nowrap}
