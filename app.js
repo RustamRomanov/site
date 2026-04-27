@@ -653,6 +653,10 @@ if (nameFxCanvas) {
       const overtone = ac.createOscillator();
       const shimmer = ac.createOscillator();
       const orbit = ac.createOscillator();
+      const panMain = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      const panOver = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      const panShimmer = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      const panOrbit = ac.createStereoPanner ? ac.createStereoPanner() : null;
       const gMain = ac.createGain();
       const gOver = ac.createGain();
       const gShimmer = ac.createGain();
@@ -692,19 +696,37 @@ if (nameFxCanvas) {
       gOrbit.gain.setValueAtTime(0.0001, t0);
       gOrbit.gain.exponentialRampToValueAtTime(0.0045 + vel * 0.003, t0 + 0.03);
       gOrbit.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      if (panMain) panMain.pan.setValueAtTime(Math.max(-1, Math.min(1, pan * 0.9 - 0.2)), t0);
+      if (panOver) panOver.pan.setValueAtTime(Math.max(-1, Math.min(1, -pan * 0.95 + 0.2)), t0);
+      if (panShimmer) panShimmer.pan.setValueAtTime(Math.max(-1, Math.min(1, pan * 0.7 + 0.35)), t0);
+      if (panOrbit) panOrbit.pan.setValueAtTime(Math.max(-1, Math.min(1, -pan * 0.55 - 0.28)), t0);
       bp.frequency.exponentialRampToValueAtTime(3900 + vel * 1200, t0 + dur * 0.4);
       bp.frequency.exponentialRampToValueAtTime(1850, t0 + dur);
       if (panNode) {
         panNode.pan.setValueAtTime(pan, t0);
-        main.connect(gMain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
-        overtone.connect(gOver).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
-        shimmer.connect(gShimmer).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
-        orbit.connect(gOrbit).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+        if (panMain && panOver && panShimmer && panOrbit) {
+          main.connect(gMain).connect(panMain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+          overtone.connect(gOver).connect(panOver).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+          shimmer.connect(gShimmer).connect(panShimmer).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+          orbit.connect(gOrbit).connect(panOrbit).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+        } else {
+          main.connect(gMain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+          overtone.connect(gOver).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+          shimmer.connect(gShimmer).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+          orbit.connect(gOrbit).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+        }
       } else {
-        main.connect(gMain).connect(hp).connect(bp).connect(ac.destination);
-        overtone.connect(gOver).connect(hp).connect(bp).connect(ac.destination);
-        shimmer.connect(gShimmer).connect(hp).connect(bp).connect(ac.destination);
-        orbit.connect(gOrbit).connect(hp).connect(bp).connect(ac.destination);
+        if (panMain && panOver && panShimmer && panOrbit) {
+          main.connect(gMain).connect(panMain).connect(hp).connect(bp).connect(ac.destination);
+          overtone.connect(gOver).connect(panOver).connect(hp).connect(bp).connect(ac.destination);
+          shimmer.connect(gShimmer).connect(panShimmer).connect(hp).connect(bp).connect(ac.destination);
+          orbit.connect(gOrbit).connect(panOrbit).connect(hp).connect(bp).connect(ac.destination);
+        } else {
+          main.connect(gMain).connect(hp).connect(bp).connect(ac.destination);
+          overtone.connect(gOver).connect(hp).connect(bp).connect(ac.destination);
+          shimmer.connect(gShimmer).connect(hp).connect(bp).connect(ac.destination);
+          orbit.connect(gOrbit).connect(hp).connect(bp).connect(ac.destination);
+        }
       }
       main.start(t0);
       overtone.start(t0 + 0.004);
