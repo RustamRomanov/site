@@ -636,7 +636,7 @@ if (nameFxCanvas) {
     const now = performance.now();
     const minGap =
       kind === "scatter" ? 120 :
-      kind === "active" ? 90 :
+      kind === "active" ? 130 :
       kind === "gather" ? 220 : 180;
     if (now - nameSfx.lastAt < minGap) return;
     nameSfx.lastAt = now;
@@ -654,6 +654,8 @@ if (nameFxCanvas) {
       const overtone = ac.createOscillator();
       const shimmer = ac.createOscillator();
       const orbit = ac.createOscillator();
+      const wobble = ac.createOscillator();
+      const wobbleGain = ac.createGain();
       const panMain = ac.createStereoPanner ? ac.createStereoPanner() : null;
       const panOver = ac.createStereoPanner ? ac.createStereoPanner() : null;
       const panShimmer = ac.createStereoPanner ? ac.createStereoPanner() : null;
@@ -666,11 +668,12 @@ if (nameFxCanvas) {
       const bp = ac.createBiquadFilter();
       const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
       const vel = Math.min(1, velocity / 2.2);
+      const warp = kind === "active" ? 1 : 0.6;
       const base =
         kind === "gather" ? 380 :
         kind === "active" ? 560 + vel * 220 :
         520 + vel * 180;
-      const dur = kind === "gather" ? 0.3 : kind === "active" ? 0.2 : 0.22;
+      const dur = kind === "gather" ? 0.32 : kind === "active" ? 0.24 : 0.22;
       hp.type = "highpass";
       hp.frequency.setValueAtTime(420, t0);
       bp.type = "bandpass";
@@ -680,32 +683,43 @@ if (nameFxCanvas) {
       overtone.type = "triangle";
       shimmer.type = "sine";
       orbit.type = "sine";
+      wobble.type = "sine";
       main.frequency.setValueAtTime(base * 1.08, t0);
-      main.frequency.exponentialRampToValueAtTime(base * 0.62, t0 + dur);
+      main.frequency.exponentialRampToValueAtTime(base * (0.58 - vel * 0.05), t0 + dur);
       overtone.frequency.setValueAtTime(base * 2.25, t0);
-      overtone.frequency.exponentialRampToValueAtTime(base * 1.42, t0 + dur * 0.92);
+      overtone.frequency.exponentialRampToValueAtTime(base * (1.35 + vel * 0.12), t0 + dur * 0.92);
       shimmer.frequency.setValueAtTime(base * 3.7, t0);
-      shimmer.frequency.exponentialRampToValueAtTime(base * 2.1, t0 + dur * 0.85);
+      shimmer.frequency.exponentialRampToValueAtTime(base * (2.35 + vel * 0.18), t0 + dur * 0.85);
       orbit.frequency.setValueAtTime(base * 0.52, t0);
       orbit.frequency.exponentialRampToValueAtTime(base * 0.34, t0 + dur);
+      wobble.frequency.setValueAtTime(7.5 + vel * 4.2, t0);
+      wobble.frequency.linearRampToValueAtTime(11.5 + vel * 7.8, t0 + dur);
+      wobbleGain.gain.setValueAtTime(32 + vel * 26, t0);
+      wobbleGain.gain.linearRampToValueAtTime(8 + vel * 10, t0 + dur);
+      wobble.connect(wobbleGain);
+      wobbleGain.connect(main.frequency);
+      wobbleGain.connect(overtone.frequency);
+      wobbleGain.connect(shimmer.frequency);
       gMain.gain.setValueAtTime(0.0001, t0);
-      gMain.gain.exponentialRampToValueAtTime(0.014 + vel * 0.007, t0 + 0.02);
+      gMain.gain.exponentialRampToValueAtTime(0.013 + vel * 0.008, t0 + 0.02);
       gMain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.96);
       gOver.gain.setValueAtTime(0.0001, t0);
-      gOver.gain.exponentialRampToValueAtTime(0.0075 + vel * 0.004, t0 + 0.016);
+      gOver.gain.exponentialRampToValueAtTime(0.008 + vel * 0.005, t0 + 0.016);
       gOver.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.9);
       gShimmer.gain.setValueAtTime(0.0001, t0);
-      gShimmer.gain.exponentialRampToValueAtTime(0.004 + vel * 0.0028, t0 + 0.012);
+      gShimmer.gain.exponentialRampToValueAtTime(0.006 + vel * 0.0042, t0 + 0.012);
       gShimmer.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.72);
       gOrbit.gain.setValueAtTime(0.0001, t0);
-      gOrbit.gain.exponentialRampToValueAtTime(0.0045 + vel * 0.003, t0 + 0.03);
+      gOrbit.gain.exponentialRampToValueAtTime(0.0065 + vel * 0.0038, t0 + 0.03);
       gOrbit.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
       if (panMain) panMain.pan.setValueAtTime(Math.max(-1, Math.min(1, pan * 0.9 - 0.2)), t0);
       if (panOver) panOver.pan.setValueAtTime(Math.max(-1, Math.min(1, -pan * 0.95 + 0.2)), t0);
       if (panShimmer) panShimmer.pan.setValueAtTime(Math.max(-1, Math.min(1, pan * 0.7 + 0.35)), t0);
       if (panOrbit) panOrbit.pan.setValueAtTime(Math.max(-1, Math.min(1, -pan * 0.55 - 0.28)), t0);
-      bp.frequency.exponentialRampToValueAtTime(3900 + vel * 1200, t0 + dur * 0.4);
-      bp.frequency.exponentialRampToValueAtTime(1850, t0 + dur);
+      bp.frequency.exponentialRampToValueAtTime(4600 + vel * 1500 + warp * 300, t0 + dur * 0.35);
+      bp.frequency.exponentialRampToValueAtTime(1750 + warp * 120, t0 + dur);
+      bp.Q.linearRampToValueAtTime(1.35 + vel * 0.85, t0 + dur * 0.45);
+      bp.Q.linearRampToValueAtTime(0.7, t0 + dur);
       if (panNode) {
         panNode.pan.setValueAtTime(pan, t0);
         if (panMain && panOver && panShimmer && panOrbit) {
@@ -736,10 +750,12 @@ if (nameFxCanvas) {
       overtone.start(t0 + 0.004);
       shimmer.start(t0 + 0.002);
       orbit.start(t0);
+      wobble.start(t0);
       main.stop(t0 + dur);
       overtone.stop(t0 + dur * 0.9);
       shimmer.stop(t0 + dur * 0.74);
       orbit.stop(t0 + dur);
+      wobble.stop(t0 + dur);
       return;
     }
 
@@ -962,7 +978,7 @@ if (nameFxCanvas) {
     const movingNow = performance.now() - namePointerLastMoveAt < 55 && pointerSpeed > 0.14;
     if (NAME_FX_AUDIO_MODE === "light-bubbly" && pointer.active && movingNow) {
       const nowMs = performance.now();
-      if (nowMs - nameSfx.lastMoveToneAt > 95) {
+      if (nowMs - nameSfx.lastMoveToneAt > 125) {
         nameSfx.lastMoveToneAt = nowMs;
         void playNameFxTone("active", pointerSpeed);
       }
