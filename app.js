@@ -541,6 +541,22 @@ if (nameFxCanvas) {
     pan: null,
     running: false,
   };
+  const nameWarp = {
+    main: null,
+    over: null,
+    shimmer: null,
+    orbit: null,
+    lfo: null,
+    lfoGain: null,
+    mainGain: null,
+    overGain: null,
+    shimmerGain: null,
+    orbitGain: null,
+    hp: null,
+    bp: null,
+    panNode: null,
+    running: false,
+  };
 
   const getNameNoiseBuffer = (ac) => {
     if (nameNoiseBuffer && nameNoiseBuffer.sampleRate === ac.sampleRate) return nameNoiseBuffer;
@@ -833,6 +849,152 @@ if (nameFxCanvas) {
     noise.stop(stopAt);
   };
 
+  const ensureNameWarp = async () => {
+    if (NAME_FX_AUDIO_MODE !== "light-bubbly") return null;
+    await unlockSiteAudio();
+    const ac = await getUiAudio();
+    if (!ac) return null;
+    if (ac.state !== "running") await ac.resume().catch(() => {});
+    if (ac.state !== "running") return null;
+    if (nameWarp.running) return { ac };
+
+    const main = ac.createOscillator();
+    const over = ac.createOscillator();
+    const shimmer = ac.createOscillator();
+    const orbit = ac.createOscillator();
+    const lfo = ac.createOscillator();
+    const lfoGain = ac.createGain();
+    const mainGain = ac.createGain();
+    const overGain = ac.createGain();
+    const shimmerGain = ac.createGain();
+    const orbitGain = ac.createGain();
+    const hp = ac.createBiquadFilter();
+    const bp = ac.createBiquadFilter();
+    const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
+
+    main.type = "sine";
+    over.type = "triangle";
+    shimmer.type = "sine";
+    orbit.type = "sine";
+    lfo.type = "sine";
+    hp.type = "highpass";
+    bp.type = "bandpass";
+    hp.frequency.setValueAtTime(420, ac.currentTime);
+    bp.frequency.setValueAtTime(1700, ac.currentTime);
+    bp.Q.setValueAtTime(0.8, ac.currentTime);
+    lfo.frequency.setValueAtTime(4.2, ac.currentTime);
+    lfoGain.gain.setValueAtTime(24, ac.currentTime);
+
+    mainGain.gain.setValueAtTime(0.0001, ac.currentTime);
+    overGain.gain.setValueAtTime(0.0001, ac.currentTime);
+    shimmerGain.gain.setValueAtTime(0.0001, ac.currentTime);
+    orbitGain.gain.setValueAtTime(0.0001, ac.currentTime);
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(main.frequency);
+    lfoGain.connect(over.frequency);
+    lfoGain.connect(shimmer.frequency);
+
+    if (panNode) {
+      main.connect(mainGain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+      over.connect(overGain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+      shimmer.connect(shimmerGain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+      orbit.connect(orbitGain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+    } else {
+      main.connect(mainGain).connect(hp).connect(bp).connect(ac.destination);
+      over.connect(overGain).connect(hp).connect(bp).connect(ac.destination);
+      shimmer.connect(shimmerGain).connect(hp).connect(bp).connect(ac.destination);
+      orbit.connect(orbitGain).connect(hp).connect(bp).connect(ac.destination);
+    }
+
+    const t = ac.currentTime;
+    main.start(t);
+    over.start(t + 0.002);
+    shimmer.start(t + 0.001);
+    orbit.start(t);
+    lfo.start(t);
+
+    nameWarp.main = main;
+    nameWarp.over = over;
+    nameWarp.shimmer = shimmer;
+    nameWarp.orbit = orbit;
+    nameWarp.lfo = lfo;
+    nameWarp.lfoGain = lfoGain;
+    nameWarp.mainGain = mainGain;
+    nameWarp.overGain = overGain;
+    nameWarp.shimmerGain = shimmerGain;
+    nameWarp.orbitGain = orbitGain;
+    nameWarp.hp = hp;
+    nameWarp.bp = bp;
+    nameWarp.panNode = panNode;
+    nameWarp.running = true;
+    return { ac };
+  };
+
+  const updateNameWarp = async (scatter, motion, panNorm) => {
+    const state = await ensureNameWarp();
+    if (!state || !nameWarp.running || !nameWarp.main || !nameWarp.mainGain) return;
+    const ac = state.ac;
+    const t = ac.currentTime;
+    const s = Math.max(0, Math.min(1, scatter));
+    const m = Math.max(0, Math.min(1, motion));
+    const energy = Math.max(0, Math.min(1, s * 0.78 + m * 0.55));
+    const base = 300 + energy * 240;
+
+    nameWarp.main.frequency.cancelScheduledValues(t);
+    nameWarp.over.frequency.cancelScheduledValues(t);
+    nameWarp.shimmer.frequency.cancelScheduledValues(t);
+    nameWarp.orbit.frequency.cancelScheduledValues(t);
+    nameWarp.main.frequency.exponentialRampToValueAtTime(base * 1.0, t + 0.06);
+    nameWarp.over.frequency.exponentialRampToValueAtTime(base * 1.85, t + 0.06);
+    nameWarp.shimmer.frequency.exponentialRampToValueAtTime(base * 2.9, t + 0.06);
+    nameWarp.orbit.frequency.exponentialRampToValueAtTime(base * 0.5, t + 0.06);
+
+    nameWarp.hp.frequency.cancelScheduledValues(t);
+    nameWarp.bp.frequency.cancelScheduledValues(t);
+    nameWarp.bp.Q.cancelScheduledValues(t);
+    nameWarp.lfo.frequency.cancelScheduledValues(t);
+    nameWarp.lfoGain.gain.cancelScheduledValues(t);
+    nameWarp.hp.frequency.exponentialRampToValueAtTime(380 + energy * 520, t + 0.07);
+    nameWarp.bp.frequency.exponentialRampToValueAtTime(1600 + energy * 2900, t + 0.07);
+    nameWarp.bp.Q.linearRampToValueAtTime(0.75 + energy * 1.2, t + 0.07);
+    nameWarp.lfo.frequency.linearRampToValueAtTime(3.8 + energy * 5.4, t + 0.07);
+    nameWarp.lfoGain.gain.linearRampToValueAtTime(14 + energy * 28, t + 0.07);
+
+    const gMain = 0.0001 + energy * 0.028;
+    const gOver = 0.0001 + energy * 0.014;
+    const gShimmer = 0.0001 + energy * 0.011;
+    const gOrbit = 0.0001 + energy * 0.012;
+    nameWarp.mainGain.gain.cancelScheduledValues(t);
+    nameWarp.overGain.gain.cancelScheduledValues(t);
+    nameWarp.shimmerGain.gain.cancelScheduledValues(t);
+    nameWarp.orbitGain.gain.cancelScheduledValues(t);
+    nameWarp.mainGain.gain.exponentialRampToValueAtTime(gMain, t + 0.05);
+    nameWarp.overGain.gain.exponentialRampToValueAtTime(gOver, t + 0.05);
+    nameWarp.shimmerGain.gain.exponentialRampToValueAtTime(gShimmer, t + 0.05);
+    nameWarp.orbitGain.gain.exponentialRampToValueAtTime(gOrbit, t + 0.05);
+
+    if (nameWarp.panNode) {
+      nameWarp.panNode.pan.cancelScheduledValues(t);
+      nameWarp.panNode.pan.linearRampToValueAtTime(Math.max(-1, Math.min(1, panNorm)), t + 0.05);
+    }
+  };
+
+  const stopNameWarp = async () => {
+    if (!nameWarp.running || !nameWarp.mainGain) return;
+    const ac = await getUiAudio();
+    if (!ac) return;
+    const t = ac.currentTime;
+    nameWarp.mainGain.gain.cancelScheduledValues(t);
+    nameWarp.overGain.gain.cancelScheduledValues(t);
+    nameWarp.shimmerGain.gain.cancelScheduledValues(t);
+    nameWarp.orbitGain.gain.cancelScheduledValues(t);
+    nameWarp.mainGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+    nameWarp.overGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+    nameWarp.shimmerGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+    nameWarp.orbitGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+  };
+
   function buildNameParticles() {
     const dpr = window.devicePixelRatio || 1;
     const rect = nameFxCanvas.getBoundingClientRect();
@@ -970,19 +1132,19 @@ if (nameFxCanvas) {
     const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
     if (pointer.active && !nameSfx.wasActive) {
       nameSfx.wasActive = true;
-      void playNameFxTone("scatter", pointerSpeed);
+      if (NAME_FX_AUDIO_MODE !== "light-bubbly") void playNameFxTone("scatter", pointerSpeed);
     }
     if (pointer.active && avgDisplacement > 0.9 && performance.now() - nameSfx.lastScatterAt > 160) {
       nameSfx.wasScattered = true;
       nameSfx.lastScatterAt = performance.now();
     }
     const movingNow = performance.now() - namePointerLastMoveAt < 55 && pointerSpeed > 0.14;
-    if (NAME_FX_AUDIO_MODE === "light-bubbly" && pointer.active && movingNow) {
-      const nowMs = performance.now();
-      if (nowMs - nameSfx.lastMoveToneAt > 700) {
-        nameSfx.lastMoveToneAt = nowMs;
-        void playNameFxTone("active", pointerSpeed);
-      }
+    if (NAME_FX_AUDIO_MODE === "light-bubbly") {
+      const scatterSync = Math.max(0, Math.min(1, (avgDisplacement - 0.35) / 2.1));
+      const motionSync = movingNow ? Math.max(0, Math.min(1, pointerSpeed / 2.2)) : 0;
+      const syncPan = pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1;
+      if (scatterSync > 0.01) void updateNameWarp(scatterSync, motionSync, syncPan);
+      else void stopNameWarp();
     }
     const hissIntensity = pointer.active && movingNow ? Math.min(1, avgDisplacement / 2.4) : 0;
     const hissPan = pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1;
@@ -992,7 +1154,8 @@ if (nameFxCanvas) {
       nameSfx.wasActive = false;
       if (nameSfx.wasScattered || avgDisplacement > 0.45) {
         nameSfx.wasScattered = false;
-        void playNameFxTone("gather", 0);
+        if (NAME_FX_AUDIO_MODE !== "light-bubbly") void playNameFxTone("gather", 0);
+        else void stopNameWarp();
       }
     }
   }
