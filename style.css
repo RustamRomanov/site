@@ -1430,7 +1430,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   #intro-stats{row-gap:8px;column-gap:8px;display:grid;grid-template-columns:1fr 1fr;align-items:center;width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);padding:0 var(--hero-btn-pad)}
   #intro-stats .istat{width:100%;justify-content:center}
   #intro-stats .istat,
-  #intro-stats .showreel-cta{transform:translateX(4mm)}
+  #intro-stats .showreel-cta{transform:translateX(2mm)}
   .hero-scroll-cue{
     display:flex;
     position:fixed;
