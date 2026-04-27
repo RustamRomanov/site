@@ -1357,10 +1357,10 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
 @media(max-width:720px){
   .S,.sp-switch,.about-full,.ct{padding-left:20px;padding-right:20px}
   .intro{padding:8px 20px 30px;justify-content:flex-start}
-  .showreel-btn{font-size:0.84rem;letter-spacing:0.12em;padding:12px 18px;min-height:0;white-space:normal;text-align:center;line-height:1.2}
+  .showreel-btn{font-size:1rem;letter-spacing:0.14em;padding:13px 34px;min-height:0;white-space:normal;text-align:center;line-height:1.2}
   .showreel-cta{align-self:stretch;justify-content:stretch;flex:1 0 100%;padding:0 8px}
   .showreel-cta .showreel-btn{width:100%;max-width:100%;border-radius:8px}
-  .intro-slogan-block{padding-left:0;gap:12px;margin-top:44px}
+  .intro-slogan-block{padding-left:0;gap:12px;margin-top:56px}
   .intro-slogan-block .ir-oneline.ir{
     margin:18px 0 0 2px;
     font-size:clamp(0.46rem,2.45vw,0.68rem);
@@ -1403,7 +1403,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .bts-viewer img{max-width:92vw;max-height:82vh}
   .hdr{flex-wrap:wrap;gap:12px}
   footer{flex-direction:column;gap:10px;text-align:center}
-  .iname{height:236px;margin-top:98px}
+  .iname{height:236px;margin-top:150px}
   .ist{gap:8px;font-size:.66rem}
   .istat{padding:7px 10px}
   .istat em{white-space:nowrap}
