@@ -202,8 +202,8 @@ nav.s{mix-blend-mode:normal;background:rgba(9,9,9,.64);backdrop-filter:blur(14px
 .istat:hover{border-color:rgba(200,164,104,.35);background:rgba(200,164,104,.08);transform:translateY(-2px)}
 .istat:hover::after{transform:scaleX(1);opacity:1}
 .ist em{color:var(--g);font-style:normal}
-.icue{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-family:var(--font-ui);font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--m)}
-.icue-l{width:1px;height:40px;background:linear-gradient(to bottom,var(--g),transparent);animation:cd 1.8s infinite}
+.icue{display:flex;flex-direction:row;align-items:center;gap:7px;font-family:var(--font-ui);font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--m)}
+.icue-l{width:1px;height:34px;background:linear-gradient(to bottom,var(--g),transparent);animation:cd 1.8s infinite}
 @keyframes cd{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
 /* ═══ SECTIONS ═══ */
@@ -1409,8 +1409,8 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .istat em{white-space:nowrap}
   .istat:nth-of-type(1),.istat:nth-of-type(2){flex:0 0 auto}
   #intro-stats{row-gap:8px;display:flex;flex-wrap:wrap;align-items:center}
-  #intro-stats .icue{order:90;flex:0 0 auto;align-items:flex-end;gap:2px;margin-left:auto}
-  #intro-stats .icue-l{height:26px}
+  #intro-stats .icue{order:90;flex:0 0 auto;align-items:center;gap:5px;margin-left:auto;transform:translateY(-8px)}
+  #intro-stats .icue-l{height:22px}
   #intro-stats .showreel-cta{order:99;width:100%}
   .sp-block{padding:14px}
   .sp-switch{padding-top:24px;padding-bottom:20px}
