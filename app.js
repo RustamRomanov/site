@@ -185,6 +185,16 @@ const MOBILE_TOP_ARTISTS = [
   "Iowa",
   "Мумий Тролль",
   "Гуф",
+  "Николай Басков",
+  "Аня Семенович",
+  "Сати Казанова",
+  "Хор Турецкого",
+  "Doni",
+  "L’one",
+  "Bahh Tee & Turken",
+  "Escape",
+  "EMIN",
+  "Султан Ураган",
 ];
 const BACKSTAGE_IMAGES = [
   "bts-01.png", "bts-02.png", "bts-03.png", "bts-04.png", "bts-05.png", "bts-06.png",
@@ -2404,7 +2414,7 @@ ADS.forEach((a, i) => {
     let downCardId = "";
     let raf = 0;
     let last = 0;
-    const SPEED = 0.08; // px/ms
+    const SPEED = 0.052; // px/ms
     const normalize = () => {
       if (!singleWidth) return;
       if (viewport.scrollLeft >= singleWidth) viewport.scrollLeft -= singleWidth;
