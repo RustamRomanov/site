@@ -22,36 +22,50 @@ function absAsset(rel) {
 
 function initStartupLoader() {
   const loader = document.getElementById("startup-loader");
-  const media = document.getElementById("startup-loader-media");
-  if (!loader || !media) return;
-  const variants = [
-    "assets/loader/startup-1.png",
-    "assets/loader/startup-2.png",
-    "assets/loader/startup-3.png",
-    "assets/loader/startup-4.png",
-    "assets/loader/startup-5.png",
-  ];
-  const pick = variants[Math.floor(Math.random() * variants.length)];
-  media.style.backgroundImage = `url("${absAsset(pick)}")`;
+  if (!loader) return;
   document.body.classList.add("is-loading");
 
-  const minMs = 3000 + Math.floor(Math.random() * 2001); // 3-5s
+  const minMs = 3000; // strict 3s as requested
   let minDone = false;
   let pageDone = document.readyState === "complete";
+  let reelReady = false;
   let released = false;
+
+  const isReelPlaying = () => {
+    const reel = document.getElementById("reel");
+    if (!reel) return false;
+    return !reel.paused && reel.readyState >= 2 && reel.currentTime > 0.04;
+  };
+
+  const pokeReelPlay = () => {
+    const reel = document.getElementById("reel");
+    if (!reel) return;
+    reel.muted = true;
+    const p = reel.play();
+    if (p) p.catch(() => {});
+  };
+
   const release = () => {
-    if (released || !minDone || !pageDone) return;
+    if (released || !minDone || !pageDone || !reelReady) return;
     released = true;
     loader.classList.add("is-hidden");
     setTimeout(() => {
       loader.remove();
       document.body.classList.remove("is-loading");
-    }, 700);
+    }, 520);
   };
+
+  const poll = setInterval(() => {
+    if (!reelReady) reelReady = isReelPlaying();
+    if (!reelReady) pokeReelPlay();
+    release();
+  }, 220);
+
   setTimeout(() => {
     minDone = true;
     release();
   }, minMs);
+
   addEventListener(
     "load",
     () => {
@@ -60,12 +74,16 @@ function initStartupLoader() {
     },
     { once: true },
   );
-  // Safety valve: never block more than 8s if some resource hangs.
+
+  // Safety valve: if some browser keeps video in paused/blocked state, do not freeze startup forever.
   setTimeout(() => {
+    reelReady = true;
     pageDone = true;
     minDone = true;
     release();
-  }, 8000);
+  }, 9000);
+
+  addEventListener("beforeunload", () => clearInterval(poll), { once: true });
 }
 
 initStartupLoader();
