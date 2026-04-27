@@ -393,6 +393,35 @@ addEventListener(
   { passive: true },
 );
 
+// ═══ MOBILE NAV ═══
+(() => {
+  const nav = document.getElementById("nav");
+  const burger = document.getElementById("nav-burger");
+  const mobile = document.getElementById("nav-mobile");
+  if (!nav || !burger || !mobile) return;
+  const mq = window.matchMedia("(max-width: 720px)");
+
+  const closeMenu = () => {
+    nav.classList.remove("m-open");
+    burger.setAttribute("aria-expanded", "false");
+    mobile.setAttribute("aria-hidden", "true");
+  };
+  const openMenu = () => {
+    nav.classList.add("m-open");
+    burger.setAttribute("aria-expanded", "true");
+    mobile.setAttribute("aria-hidden", "false");
+  };
+  const toggleMenu = () => {
+    if (nav.classList.contains("m-open")) closeMenu();
+    else openMenu();
+  };
+
+  burger.addEventListener("click", toggleMenu);
+  mobile.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
+  addEventListener("resize", () => { if (!mq.matches) closeMenu(); }, { passive: true });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
+})();
+
 // ═══ INTRO ANIMATION + VIDEO + NAME FX ═══
 const reel = document.getElementById("reel");
 if (reel) {
