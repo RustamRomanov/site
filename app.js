@@ -530,6 +530,13 @@ if (nameFxCanvas) {
     lastScatterAt: 0,
   };
   let nameNoiseBuffer = null;
+  const nameHiss = {
+    source: null,
+    gain: null,
+    filter: null,
+    pan: null,
+    running: false,
+  };
 
   const getNameNoiseBuffer = (ac) => {
     if (nameNoiseBuffer && nameNoiseBuffer.sampleRate === ac.sampleRate) return nameNoiseBuffer;
@@ -542,6 +549,64 @@ if (nameFxCanvas) {
     }
     nameNoiseBuffer = b;
     return b;
+  };
+
+  const ensureNameHiss = async () => {
+    await unlockSiteAudio();
+    const ac = await getUiAudio();
+    if (!ac) return null;
+    if (ac.state !== "running") await ac.resume().catch(() => {});
+    if (ac.state !== "running") return null;
+    if (nameHiss.running && nameHiss.source && nameHiss.gain) return { ac };
+
+    const src = ac.createBufferSource();
+    src.buffer = getNameNoiseBuffer(ac);
+    src.loop = true;
+    const f = ac.createBiquadFilter();
+    f.type = "bandpass";
+    f.frequency.setValueAtTime(2200, ac.currentTime);
+    f.Q.setValueAtTime(0.65, ac.currentTime);
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, ac.currentTime);
+    const p = ac.createStereoPanner ? ac.createStereoPanner() : null;
+    if (p) {
+      src.connect(f).connect(g).connect(p).connect(ac.destination);
+    } else {
+      src.connect(f).connect(g).connect(ac.destination);
+    }
+    src.start();
+    nameHiss.source = src;
+    nameHiss.gain = g;
+    nameHiss.filter = f;
+    nameHiss.pan = p;
+    nameHiss.running = true;
+    return { ac };
+  };
+
+  const updateNameHiss = async (intensity, panNorm) => {
+    const state = await ensureNameHiss();
+    if (!state || !nameHiss.gain || !nameHiss.filter) return;
+    const t = state.ac.currentTime;
+    const k = Math.max(0, Math.min(1, intensity));
+    const targetGain = 0.0001 + k * 0.052;
+    const targetFreq = 1500 + k * 1800;
+    nameHiss.gain.gain.cancelScheduledValues(t);
+    nameHiss.gain.gain.exponentialRampToValueAtTime(targetGain, t + 0.055);
+    nameHiss.filter.frequency.cancelScheduledValues(t);
+    nameHiss.filter.frequency.exponentialRampToValueAtTime(Math.max(80, targetFreq), t + 0.06);
+    if (nameHiss.pan) {
+      nameHiss.pan.pan.cancelScheduledValues(t);
+      nameHiss.pan.pan.linearRampToValueAtTime(Math.max(-1, Math.min(1, panNorm)), t + 0.05);
+    }
+  };
+
+  const stopNameHiss = async () => {
+    if (!nameHiss.running || !nameHiss.gain) return;
+    const ac = await getUiAudio();
+    if (!ac) return;
+    const t = ac.currentTime;
+    nameHiss.gain.gain.cancelScheduledValues(t);
+    nameHiss.gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
   };
 
   const playNameFxTone = async (kind, velocity = 0) => {
@@ -771,8 +836,11 @@ if (nameFxCanvas) {
     if (pointer.active && avgDisplacement > 0.9 && performance.now() - nameSfx.lastScatterAt > 160) {
       nameSfx.wasScattered = true;
       nameSfx.lastScatterAt = performance.now();
-      void playNameFxTone("active", pointerSpeed);
     }
+    const hissIntensity = pointer.active ? Math.min(1, avgDisplacement / 2.6) : 0;
+    const hissPan = pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1;
+    if (hissIntensity > 0.02) void updateNameHiss(hissIntensity, hissPan);
+    else void stopNameHiss();
     if (!pointer.active && nameSfx.wasActive) {
       nameSfx.wasActive = false;
       if (nameSfx.wasScattered || avgDisplacement > 0.45) {
