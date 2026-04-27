@@ -1413,14 +1413,17 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   #intro-stats .istat{width:100%;justify-content:center}
   #intro-stats .icue{
     order:90;
-    position:fixed;
-    top:52px;
-    right:16px;
-    z-index:540;
+    position:fixed !important;
+    top:56px !important;
+    right:16px !important;
+    left:auto !important;
+    bottom:auto !important;
+    margin:0 !important;
+    z-index:1200 !important;
     justify-self:auto;
     align-items:center;
     gap:5px;
-    transform:none;
+    transform:none !important;
   }
   #intro-stats .icue-l{height:22px}
   #intro-stats .showreel-cta{order:99;grid-column:1 / -1;width:100%;margin-top:-2px}
