@@ -1398,12 +1398,12 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .br-sng{font-size:.66rem}
   .nm a{display:none}
   nav{
-    padding:14px 16px;
+    padding:9px 16px;
     align-items:flex-start;
     flex-wrap:wrap;
     gap:8px;
   }
-  nav.s{padding:10px 16px}
+  nav.s{padding:7px 16px}
   .nl{
     max-width:calc(100% - 56px);
     font-size:.48rem;
