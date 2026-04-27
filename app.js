@@ -20,6 +20,56 @@ function absAsset(rel) {
   }
 }
 
+function initStartupLoader() {
+  const loader = document.getElementById("startup-loader");
+  const media = document.getElementById("startup-loader-media");
+  if (!loader || !media) return;
+  const variants = [
+    "assets/loader/startup-1.png",
+    "assets/loader/startup-2.png",
+    "assets/loader/startup-3.png",
+    "assets/loader/startup-4.png",
+    "assets/loader/startup-5.png",
+  ];
+  const pick = variants[Math.floor(Math.random() * variants.length)];
+  media.style.backgroundImage = `url("${absAsset(pick)}")`;
+  document.body.classList.add("is-loading");
+
+  const minMs = 3000 + Math.floor(Math.random() * 2001); // 3-5s
+  let minDone = false;
+  let pageDone = document.readyState === "complete";
+  let released = false;
+  const release = () => {
+    if (released || !minDone || !pageDone) return;
+    released = true;
+    loader.classList.add("is-hidden");
+    setTimeout(() => {
+      loader.remove();
+      document.body.classList.remove("is-loading");
+    }, 700);
+  };
+  setTimeout(() => {
+    minDone = true;
+    release();
+  }, minMs);
+  addEventListener(
+    "load",
+    () => {
+      pageDone = true;
+      release();
+    },
+    { once: true },
+  );
+  // Safety valve: never block more than 8s if some resource hangs.
+  setTimeout(() => {
+    pageDone = true;
+    minDone = true;
+    release();
+  }, 8000);
+}
+
+initStartupLoader();
+
 /** When true, #reel (hero bg) is intentionally not auto-resumed — e.g. showreel modal plays with sound and Chrome would fight pause/play loops. */
 let __bgReelResumeSuppressed = false;
 function resumeBackgroundReel() {
