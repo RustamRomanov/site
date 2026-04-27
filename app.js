@@ -174,11 +174,11 @@ const ARTIST_WIKI_TITLES = {
   "Natan": "Natan",
 };
 const LABEL_LOGOS = {
-  "Black Star": "assets/artist/Black%20Star.png",
+  "Black Star": "assets/artist/Black%20Star.webp",
   "Gazgolder": "https://logo.clearbit.com/gazgolder.com",
   "ПЦ Гуцериев": "https://logo.clearbit.com/gutserievmedia.ru",
-  "Lotus Music": "assets/artist/Lotus%20Music.png",
-  "Монолит": "assets/artist/%D0%9C%D0%BE%D0%BD%D0%BE%D0%BB%D0%B8%D1%82.png",
+  "Lotus Music": "assets/artist/Lotus%20Music.webp",
+  "Монолит": "assets/artist/%D0%9C%D0%BE%D0%BD%D0%BE%D0%BB%D0%B8%D1%82.webp",
   "Respect": "https://logo.clearbit.com/respectproduction.ru",
   "Warner Music": "https://logo.clearbit.com/wmg.com",
 };
@@ -1953,7 +1953,13 @@ function updateShowreelPauseUI() {
   }
 }
 
+const SHOWREEL_VIMEO_ID = (document.body?.dataset.showreelVimeo || "").trim();
+
 function openShowreel() {
+  if (SHOWREEL_VIMEO_ID) {
+    openYT(SHOWREEL_VIMEO_ID);
+    return;
+  }
   const modal = document.getElementById("showreel-modal");
   const wrap = document.getElementById("showreel-bubble-wrap");
   const bubble = document.getElementById("showreel-bubble");
@@ -1961,6 +1967,10 @@ function openShowreel() {
   const feDisp = document.getElementById("feDisp");
   if (!modal || !wrap || !bubble || !v) return;
   __bgReelResumeSuppressed = true;
+  if (!v.src) {
+    v.src = absAsset("assets/video/showreel2025_small_1.mp4");
+    v.load();
+  }
   v.currentTime = 0;
   v.muted = false;
   modal.classList.add("open");
@@ -2000,7 +2010,11 @@ function closeShowreel() {
   const wrap = document.getElementById("showreel-bubble-wrap");
   const bubble = document.getElementById("showreel-bubble");
   const feDisp = document.getElementById("feDisp");
-  if (v) v.pause();
+  if (v) {
+    v.pause();
+    v.removeAttribute("src");
+    v.load();
+  }
   document.body.style.overflow = "";
   if (!wrap) {
     modal.classList.remove("open");
@@ -2132,12 +2146,14 @@ function sL(l) {
         .replace(/[^a-zA-Z0-9а-яА-ЯёЁ]+/g, "_")
     )}`;
     const localCandidates = [
+      `${localBase}.webp`,
       `${localBase}.jpg`,
       `${localBase}.jpeg`,
       `${localBase}.png`,
-      `${localBase}.webp`,
+      `${localFallback}.webp`,
       `${localFallback}.jpg`,
       `${localFallback}.png`,
+      `${localLatin}.webp`,
       `${localLatin}.jpg`,
       `${localLatin}.png`,
     ];
@@ -2429,6 +2445,23 @@ function sL(l) {
   }
 
   const bubbles = all.map(d => new Bubble(d));
+
+  // Warm up a subset of artist/label images in idle time so circles show photos faster.
+  const warmupBubbleMedia = () => {
+    const targets = bubbles.slice(0, Math.min(26, bubbles.length));
+    let i = 0;
+    const pump = () => {
+      const end = Math.min(i + 2, targets.length);
+      for (; i < end; i += 1) ensureBubbleImage(targets[i]);
+      if (i < targets.length) {
+        if (window.requestIdleCallback) requestIdleCallback(pump, { timeout: 1800 });
+        else setTimeout(pump, 120);
+      }
+    };
+    pump();
+  };
+  if (window.requestIdleCallback) requestIdleCallback(warmupBubbleMedia, { timeout: 1200 });
+  else setTimeout(warmupBubbleMedia, 250);
   function pickBubble(x, y) {
     for (let i = bubbles.length - 1; i >= 0; i -= 1) {
       const b = bubbles[i];

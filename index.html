@@ -27,7 +27,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-showreel-vimeo="">
 <svg class="visually-hidden" width="0" height="0" aria-hidden="true" focusable="false">
   <defs>
     <filter id="showreel-bubble-glass" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
@@ -56,9 +56,7 @@
     <div class="showreel-bubble" id="showreel-bubble" role="dialog" aria-label="Showreel" onclick="event.stopPropagation()">
       <button type="button" class="showreel-modal-close" id="showreel-modal-close" aria-label="Закрыть">&times;</button>
       <div class="showreel-frame">
-        <video id="showreel-player" class="showreel-player" playsinline preload="metadata" controlslist="nodownload" disablePictureInPicture>
-          <source src="assets/video/showreel2025_small_1.mp4" type="video/mp4" />
-        </video>
+        <video id="showreel-player" class="showreel-player" playsinline preload="none" controlslist="nodownload" disablePictureInPicture></video>
         <button type="button" class="showreel-pause" id="showreel-pause" aria-pressed="false" aria-label="Пауза">
           <svg class="showreel-ic showreel-ic--pause" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><rect x="5" y="4" width="5" height="16" rx="0.5" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="0.5" fill="currentColor"/></svg>
           <svg class="showreel-ic showreel-ic--play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.5 6.2L18.5 12L9.5 17.8z"/></svg>

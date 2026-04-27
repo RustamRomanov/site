@@ -489,7 +489,7 @@ canvas{width:100%;height:100%;display:block}
   position:absolute;
   inset:8px 12px;
   border-radius:4px;
-  background:#fff url("assets/img/yandex-alisa-logo.png") center/contain no-repeat;
+  background:#fff url("assets/img/yandex-alisa-logo.webp") center/contain no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -510,7 +510,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/yandex-taxi-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/yandex-taxi-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -531,7 +531,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:2px 4px;
-  background:#fff url("assets/img/yandex-market-logo.png") center/contain no-repeat;
+  background:#fff url("assets/img/yandex-market-logo.webp") center/contain no-repeat;
   background-size:100% auto;
   opacity:0;
   transition:opacity .2s ease;
@@ -554,7 +554,7 @@ canvas{width:100%;height:100%;display:block}
   position:absolute;
   inset:8px 12px;
   border-radius:4px;
-  background:#fff url("assets/img/electrolux-logo.png") center/contain no-repeat;
+  background:#fff url("assets/img/electrolux-logo.webp") center/contain no-repeat;
   background-size:88% auto;
   opacity:0;
   transition:opacity .2s ease;
@@ -576,7 +576,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/cheetos-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/cheetos-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -598,7 +598,7 @@ canvas{width:100%;height:100%;display:block}
   position:absolute;
   inset:8px 12px;
   border-radius:4px;
-  background:#fff url("assets/img/leon-logo.png") center/contain no-repeat;
+  background:#fff url("assets/img/leon-logo.webp") center/contain no-repeat;
   background-size:86% auto;
   opacity:0;
   transition:opacity .2s ease;
@@ -620,7 +620,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/rendezvous-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/rendezvous-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -641,7 +641,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/585-zolotoy-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/585-zolotoy-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -662,7 +662,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/fresh-bar-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/fresh-bar-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -683,7 +683,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/deonica-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/deonica-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -704,7 +704,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/modelform-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/modelform-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -725,7 +725,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/sova-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/sova-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -746,7 +746,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/darvol-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/darvol-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -767,7 +767,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/ravon-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/ravon-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -788,7 +788,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/bork-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/bork-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -809,7 +809,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/rutube-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/rutube-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -830,7 +830,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/ren-tv-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/ren-tv-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -851,7 +851,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/rosselkhozbank-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/rosselkhozbank-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -872,7 +872,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/tnt-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/tnt-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -893,7 +893,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/sts-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/sts-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -915,7 +915,7 @@ canvas{width:100%;height:100%;display:block}
   position:absolute;
   inset:0;
   background-color:#fff;
-  background-image:url("assets/img/polioxidoniy-logo.png");
+  background-image:url("assets/img/polioxidoniy-logo.webp");
   background-position:center;
   background-repeat:no-repeat;
   background-size:53.25% auto;
@@ -939,7 +939,7 @@ canvas{width:100%;height:100%;display:block}
   content:"";
   position:absolute;
   inset:0;
-  background:#fff url("assets/img/artneo-logo.png") center/cover no-repeat;
+  background:#fff url("assets/img/artneo-logo.webp") center/cover no-repeat;
   opacity:0;
   transition:opacity .2s ease;
 }
@@ -1054,7 +1054,7 @@ canvas{width:100%;height:100%;display:block}
   inset:0;
   border-radius:0;
   background-color:#f3c640 !important;
-  background-image:url("assets/img/sts-logo.png");
+  background-image:url("assets/img/sts-logo.webp");
   background-position:center center;
   background-repeat:no-repeat;
   background-size:contain;
@@ -1128,7 +1128,7 @@ canvas{width:100%;height:100%;display:block}
   border-radius:0 !important;
   box-shadow:none !important;
   background-color:#f47a20 !important;
-  background-image:url("assets/img/cheetos-logo.png") !important;
+  background-image:url("assets/img/cheetos-logo.webp") !important;
   background-repeat:no-repeat !important;
   background-position:center center !important;
   background-size:57.6% auto !important;
@@ -1185,7 +1185,7 @@ canvas{width:100%;height:100%;display:block}
   border-radius:0 !important;
   box-shadow:none !important;
   background-color:#f47a20 !important;
-  background-image:url("assets/img/cheetos-logo.png") !important;
+  background-image:url("assets/img/cheetos-logo.webp") !important;
   background-repeat:no-repeat !important;
   background-position:center center !important;
   background-size:57.6% auto !important;
@@ -1207,7 +1207,7 @@ canvas{width:100%;height:100%;display:block}
   border-radius:0 !important;
   box-shadow:none !important;
   background-color:#222222 !important;
-  background-image:url("assets/img/darvol-logo.png") !important;
+  background-image:url("assets/img/darvol-logo.webp") !important;
   background-position:50% 65% !important;
   background-repeat:no-repeat !important;
   background-size:contain !important;
@@ -1229,7 +1229,7 @@ canvas{width:100%;height:100%;display:block}
   inset:-1px !important;
   border-radius:0 !important;
   background-color:#f3c640 !important;
-  background-image:url("assets/img/sts-logo.png") !important;
+  background-image:url("assets/img/sts-logo.webp") !important;
   background-position:center center !important;
   background-repeat:no-repeat !important;
   background-size:contain !important;
