@@ -1361,20 +1361,20 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .showreel-btn{font-size:1rem;letter-spacing:0.14em;padding:13px 34px;min-height:0;white-space:normal;text-align:center;line-height:1.2}
   .showreel-cta{align-self:stretch;justify-content:center;flex:1 0 100%;padding:0 var(--hero-btn-pad);width:100%;margin-left:0;display:flex}
   .showreel-cta .showreel-btn{width:100%;max-width:100%;border-radius:8px}
-  .intro-hero{margin-top:190px}
+  .intro-hero{margin-top:0;align-self:stretch}
   .intro-slogan-block{
-    position:fixed;
-    top:18px;
-    left:8px;
-    z-index:1200;
+    position:relative;
+    top:auto;
+    left:auto;
+    z-index:2;
     padding-left:0;
     gap:10px;
-    margin-top:0;
+    margin-top:2px;
     margin-bottom:0;
-    width:auto;
+    width:100%;
   }
   .intro-slogan-block .ir-oneline.ir{
-    margin:18px 0 0 2px;
+    margin:0 0 0 2px;
     font-size:clamp(0.46rem,2.45vw,0.68rem);
     letter-spacing:clamp(0.05em,0.24vw,0.16em);
   }
