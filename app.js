@@ -529,7 +529,7 @@ if (nameFxCanvas) {
     wasScattered: false,
     lastScatterAt: 0,
   };
-  const NAME_FX_AUDIO_MODE = "hiss"; // off | light-bubbly | hiss
+  const NAME_FX_AUDIO_MODE = "light-bubbly"; // off | light-bubbly | hiss
   let namePointerLastMoveAt = 0;
   let nameNoiseBuffer = null;
   const nameHiss = {
@@ -651,39 +651,57 @@ if (nameFxCanvas) {
       const pan = Math.max(-1, Math.min(1, pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1));
       const main = ac.createOscillator();
       const overtone = ac.createOscillator();
+      const shimmer = ac.createOscillator();
       const gMain = ac.createGain();
       const gOver = ac.createGain();
-      const lp = ac.createBiquadFilter();
+      const gShimmer = ac.createGain();
+      const hp = ac.createBiquadFilter();
+      const bp = ac.createBiquadFilter();
       const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
       const vel = Math.min(1, velocity / 2.2);
-      const base = kind === "gather" ? 460 : 620 + vel * 160;
-      const dur = kind === "gather" ? 0.16 : 0.11;
-      lp.type = "lowpass";
-      lp.frequency.setValueAtTime(2200, t0);
+      const base = kind === "gather" ? 380 : 520 + vel * 180;
+      const dur = kind === "gather" ? 0.24 : 0.16;
+      hp.type = "highpass";
+      hp.frequency.setValueAtTime(420, t0);
+      bp.type = "bandpass";
+      bp.frequency.setValueAtTime(2200, t0);
+      bp.Q.setValueAtTime(0.7, t0);
       main.type = "sine";
       overtone.type = "triangle";
-      main.frequency.setValueAtTime(base * 1.02, t0);
-      main.frequency.exponentialRampToValueAtTime(base * 0.78, t0 + dur);
-      overtone.frequency.setValueAtTime(base * 1.9, t0);
-      overtone.frequency.exponentialRampToValueAtTime(base * 1.25, t0 + dur * 0.9);
+      shimmer.type = "sine";
+      main.frequency.setValueAtTime(base * 1.08, t0);
+      main.frequency.exponentialRampToValueAtTime(base * 0.62, t0 + dur);
+      overtone.frequency.setValueAtTime(base * 2.25, t0);
+      overtone.frequency.exponentialRampToValueAtTime(base * 1.42, t0 + dur * 0.92);
+      shimmer.frequency.setValueAtTime(base * 3.7, t0);
+      shimmer.frequency.exponentialRampToValueAtTime(base * 2.1, t0 + dur * 0.85);
       gMain.gain.setValueAtTime(0.0001, t0);
-      gMain.gain.exponentialRampToValueAtTime(0.012 + vel * 0.007, t0 + 0.016);
-      gMain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      gMain.gain.exponentialRampToValueAtTime(0.007 + vel * 0.004, t0 + 0.018);
+      gMain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.96);
       gOver.gain.setValueAtTime(0.0001, t0);
-      gOver.gain.exponentialRampToValueAtTime(0.0045 + vel * 0.003, t0 + 0.013);
-      gOver.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.82);
+      gOver.gain.exponentialRampToValueAtTime(0.0038 + vel * 0.0022, t0 + 0.015);
+      gOver.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.9);
+      gShimmer.gain.setValueAtTime(0.0001, t0);
+      gShimmer.gain.exponentialRampToValueAtTime(0.0019 + vel * 0.0014, t0 + 0.011);
+      gShimmer.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.72);
+      bp.frequency.exponentialRampToValueAtTime(3200 + vel * 800, t0 + dur * 0.35);
+      bp.frequency.exponentialRampToValueAtTime(1700, t0 + dur);
       if (panNode) {
         panNode.pan.setValueAtTime(pan, t0);
-        main.connect(gMain).connect(lp).connect(panNode).connect(ac.destination);
-        overtone.connect(gOver).connect(lp).connect(panNode).connect(ac.destination);
+        main.connect(gMain).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+        overtone.connect(gOver).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
+        shimmer.connect(gShimmer).connect(hp).connect(bp).connect(panNode).connect(ac.destination);
       } else {
-        main.connect(gMain).connect(lp).connect(ac.destination);
-        overtone.connect(gOver).connect(lp).connect(ac.destination);
+        main.connect(gMain).connect(hp).connect(bp).connect(ac.destination);
+        overtone.connect(gOver).connect(hp).connect(bp).connect(ac.destination);
+        shimmer.connect(gShimmer).connect(hp).connect(bp).connect(ac.destination);
       }
       main.start(t0);
       overtone.start(t0 + 0.004);
+      shimmer.start(t0 + 0.002);
       main.stop(t0 + dur);
-      overtone.stop(t0 + dur * 0.86);
+      overtone.stop(t0 + dur * 0.9);
+      shimmer.stop(t0 + dur * 0.74);
       return;
     }
 
