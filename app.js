@@ -572,49 +572,49 @@ if (nameFxCanvas) {
     noise.buffer = getNameNoiseBuffer(ac);
 
     if (kind === "scatter") {
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(220 + velocity * 6, t0);
-      osc.frequency.exponentialRampToValueAtTime(520 + velocity * 8, t0 + 0.09);
-      filter.type = "highpass";
-      filter.frequency.setValueAtTime(180, t0);
-      gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(0.028 + speedBoost, t0 + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12);
-      noiseFilter.type = "highpass";
-      noiseFilter.frequency.setValueAtTime(900, t0);
-      noiseGain.gain.setValueAtTime(0.0001, t0);
-      noiseGain.gain.exponentialRampToValueAtTime(0.04 + speedBoost * 0.7, t0 + 0.014);
-      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.11);
-    } else if (kind === "active") {
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(300, t0);
-      osc.frequency.exponentialRampToValueAtTime(390 + velocity * 2, t0 + 0.05);
-      filter.type = "bandpass";
-      filter.frequency.setValueAtTime(520, t0);
-      filter.Q.setValueAtTime(1.2, t0);
-      gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(0.012 + speedBoost * 0.55, t0 + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.075);
-      noiseFilter.type = "bandpass";
-      noiseFilter.frequency.setValueAtTime(1600, t0);
-      noiseFilter.Q.setValueAtTime(0.75, t0);
-      noiseGain.gain.setValueAtTime(0.0001, t0);
-      noiseGain.gain.exponentialRampToValueAtTime(0.022 + speedBoost * 0.45, t0 + 0.012);
-      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.08);
-    } else {
       osc.type = "sine";
-      osc.frequency.setValueAtTime(460, t0);
-      osc.frequency.exponentialRampToValueAtTime(250, t0 + 0.12);
-      filter.type = "lowpass";
+      osc.frequency.setValueAtTime(130, t0);
+      osc.frequency.exponentialRampToValueAtTime(180, t0 + 0.08);
+      filter.type = "highpass";
       filter.frequency.setValueAtTime(1200, t0);
       gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(0.022, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.004 + speedBoost * 0.15, t0 + 0.016);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.11);
+      noiseFilter.type = "highpass";
+      noiseFilter.frequency.setValueAtTime(2100, t0);
+      noiseGain.gain.setValueAtTime(0.0001, t0);
+      noiseGain.gain.exponentialRampToValueAtTime(0.072 + speedBoost * 0.95, t0 + 0.012);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.115);
+    } else if (kind === "active") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(120, t0);
+      osc.frequency.exponentialRampToValueAtTime(145, t0 + 0.045);
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(1000, t0);
+      filter.Q.setValueAtTime(0.7, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.0025 + speedBoost * 0.12, t0 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.075);
+      noiseFilter.type = "bandpass";
+      noiseFilter.frequency.setValueAtTime(2600, t0);
+      noiseFilter.Q.setValueAtTime(0.55, t0);
+      noiseGain.gain.setValueAtTime(0.0001, t0);
+      noiseGain.gain.exponentialRampToValueAtTime(0.048 + speedBoost * 0.55, t0 + 0.01);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.082);
+    } else {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(140, t0);
+      osc.frequency.exponentialRampToValueAtTime(110, t0 + 0.13);
+      filter.type = "highpass";
+      filter.frequency.setValueAtTime(900, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.0022, t0 + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
       noiseFilter.type = "bandpass";
-      noiseFilter.frequency.setValueAtTime(760, t0);
-      noiseFilter.Q.setValueAtTime(0.9, t0);
+      noiseFilter.frequency.setValueAtTime(1800, t0);
+      noiseFilter.Q.setValueAtTime(0.8, t0);
       noiseGain.gain.setValueAtTime(0.0001, t0);
-      noiseGain.gain.exponentialRampToValueAtTime(0.028, t0 + 0.02);
+      noiseGain.gain.exponentialRampToValueAtTime(0.055, t0 + 0.02);
       noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.17);
     }
 
