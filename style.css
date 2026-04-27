@@ -9,7 +9,7 @@ button{cursor:none;font:inherit;background:none;border:none;color:var(--p)}
 
 /* ═══ STARTUP LOADER ═══ */
 body.is-loading{overflow:hidden}
-#startup-loader{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;background:rgba(8,8,8,.62);backdrop-filter:blur(2px);opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#startup-loader{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;background:#000;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
 #startup-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 .startup-loader__center{position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
 .startup-loader__gif{display:block;width:auto;height:auto;max-width:min(86vw,512px);max-height:74vh;image-rendering:auto}
