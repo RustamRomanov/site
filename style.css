@@ -475,7 +475,7 @@ canvas{width:100%;height:100%;display:block}
 .adv-t{font-family:var(--font-body);font-size:1rem;font-weight:400}
 
 /* ═══ BRAND LOGOS ═══ */
-.logos-g{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--r)}
+.logos-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border:1px solid var(--r)}
 .logo-c{display:flex;align-items:center;justify-content:center;padding:24px 12px;border-right:1px solid var(--r);border-bottom:1px solid var(--r);min-height:72px;transition:background .3s;cursor:default}
 .logo-link{cursor:none}
 .logo-c:hover{background:var(--gT)}
@@ -1337,7 +1337,6 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .artists-inset{height:268px}
   .wg5{height:320px}
   .adv{flex-basis:calc((100% - 32px)/2)}
-  .logos-g{grid-template-columns:repeat(4,1fr)}
   .bts-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .br{grid-template-columns:28px 1fr 188px;height:40px}
   .strip{grid-template-columns:repeat(4,1fr)}
@@ -1361,7 +1360,6 @@ footer{border-top:1px solid var(--r);padding:24px 40px;display:flex;justify-cont
   .works-nav{width:50px;height:50px}
   .works-nav span{font-size:1.86rem}
   .adv{flex-basis:100%}
-  .logos-g{grid-template-columns:repeat(3,1fr)}
   .strip{grid-template-columns:repeat(3,1fr)}
   .br{grid-template-columns:24px 1fr 150px;height:40px}
   .br-lbl,.br-counter{font-size:.52rem}

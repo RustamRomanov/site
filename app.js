@@ -30,11 +30,10 @@ function initStartupLoader() {
 
   const minMs = 2000;
   let minDone = false;
-  let pageDone = document.readyState === "complete";
   let released = false;
 
   const release = () => {
-    if (released || !minDone || !pageDone) return;
+    if (released || !minDone) return;
     released = true;
     loader.classList.add("is-hidden");
     setTimeout(() => {
@@ -42,6 +41,13 @@ function initStartupLoader() {
       document.body.classList.remove("is-loading");
       __bgReelCanPlay = true;
       resumeBackgroundReel();
+      // Aggressive startup retries right after reveal so background motion appears immediately.
+      let tries = 0;
+      const kick = setInterval(() => {
+        tries += 1;
+        resumeBackgroundReel();
+        if (tries >= 18) clearInterval(kick);
+      }, 150);
     }, 520);
   };
 
@@ -53,7 +59,6 @@ function initStartupLoader() {
   addEventListener(
     "load",
     () => {
-      pageDone = true;
       release();
     },
     { once: true },
@@ -61,10 +66,9 @@ function initStartupLoader() {
 
   // Safety valve: do not block loader forever on hanging resources.
   setTimeout(() => {
-    pageDone = true;
     minDone = true;
     release();
-  }, 9000);
+  }, 2400);
 }
 
 initStartupLoader();
