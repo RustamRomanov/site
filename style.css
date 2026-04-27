@@ -1371,12 +1371,17 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
     gap:10px;
     margin-top:2px;
     margin-bottom:0;
-    width:100%;
+    width:100vw;
+    max-width:100vw;
+    margin-left:calc(50% - 50vw);
   }
   .intro-slogan-block .ir-oneline.ir{
-    margin:0 0 0 2px;
+    margin:0;
     font-size:clamp(0.46rem,2.45vw,0.68rem);
     letter-spacing:clamp(0.05em,0.24vw,0.16em);
+    width:100%;
+    text-align:left;
+    padding:0 8px;
   }
   .showreel-bubble-wrap,.showreel-bubble{width:100%}
   .showreel-pause{left:10px;bottom:10px;min-width:44px;min-height:44px}
@@ -1425,7 +1430,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   #intro-stats .icue{
     order:90;
     position:fixed !important;
-    top:8px !important;
+    top:max(0px, env(safe-area-inset-top)) !important;
     right:8px !important;
     left:auto !important;
     bottom:auto !important;
