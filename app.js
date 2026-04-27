@@ -636,7 +636,7 @@ if (nameFxCanvas) {
     const now = performance.now();
     const minGap =
       kind === "scatter" ? 120 :
-      kind === "active" ? 360 :
+      kind === "active" ? 700 :
       kind === "gather" ? 220 : 180;
     if (now - nameSfx.lastAt < minGap) return;
     nameSfx.lastAt = now;
@@ -649,6 +649,7 @@ if (nameFxCanvas) {
 
     const t0 = ac.currentTime;
     if (NAME_FX_AUDIO_MODE === "light-bubbly") {
+      const profileKind = kind === "scatter" ? "active" : kind;
       const pan = Math.max(-1, Math.min(1, pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1));
       const main = ac.createOscillator();
       const overtone = ac.createOscillator();
@@ -668,12 +669,12 @@ if (nameFxCanvas) {
       const bp = ac.createBiquadFilter();
       const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
       const vel = Math.min(1, velocity / 2.2);
-      const warp = kind === "active" ? 1 : 0.6;
+      const warp = profileKind === "active" ? 1 : 0.6;
       const base =
-        kind === "gather" ? 380 :
-        kind === "active" ? 430 + vel * 140 :
+        profileKind === "gather" ? 380 :
+        profileKind === "active" ? 410 + vel * 120 :
         520 + vel * 180;
-      const dur = kind === "gather" ? 0.34 : kind === "active" ? 0.62 : 0.24;
+      const dur = profileKind === "gather" ? 0.38 : profileKind === "active" ? 1.05 : 0.26;
       hp.type = "highpass";
       hp.frequency.setValueAtTime(420, t0);
       bp.type = "bandpass";
@@ -694,23 +695,23 @@ if (nameFxCanvas) {
       orbit.frequency.exponentialRampToValueAtTime(base * 0.34, t0 + dur);
       wobble.frequency.setValueAtTime(3.2 + vel * 2.4, t0);
       wobble.frequency.linearRampToValueAtTime(5.8 + vel * 3.6, t0 + dur);
-      wobbleGain.gain.setValueAtTime(kind === "active" ? 18 + vel * 16 : 30 + vel * 22, t0);
-      wobbleGain.gain.linearRampToValueAtTime(kind === "active" ? 6 + vel * 7 : 10 + vel * 11, t0 + dur);
+      wobbleGain.gain.setValueAtTime(profileKind === "active" ? 12 + vel * 10 : 24 + vel * 16, t0);
+      wobbleGain.gain.linearRampToValueAtTime(profileKind === "active" ? 4 + vel * 5 : 8 + vel * 9, t0 + dur);
       wobble.connect(wobbleGain);
       wobbleGain.connect(main.frequency);
       wobbleGain.connect(overtone.frequency);
       wobbleGain.connect(shimmer.frequency);
       gMain.gain.setValueAtTime(0.0001, t0);
-      gMain.gain.exponentialRampToValueAtTime(0.013 + vel * 0.008, t0 + (kind === "active" ? 0.09 : 0.02));
+      gMain.gain.exponentialRampToValueAtTime(0.013 + vel * 0.008, t0 + (profileKind === "active" ? 0.24 : 0.04));
       gMain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.96);
       gOver.gain.setValueAtTime(0.0001, t0);
-      gOver.gain.exponentialRampToValueAtTime(0.008 + vel * 0.005, t0 + (kind === "active" ? 0.11 : 0.016));
+      gOver.gain.exponentialRampToValueAtTime(0.008 + vel * 0.005, t0 + (profileKind === "active" ? 0.27 : 0.028));
       gOver.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.9);
       gShimmer.gain.setValueAtTime(0.0001, t0);
-      gShimmer.gain.exponentialRampToValueAtTime(0.006 + vel * 0.0042, t0 + (kind === "active" ? 0.095 : 0.012));
+      gShimmer.gain.exponentialRampToValueAtTime(0.006 + vel * 0.0042, t0 + (profileKind === "active" ? 0.22 : 0.024));
       gShimmer.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.72);
       gOrbit.gain.setValueAtTime(0.0001, t0);
-      gOrbit.gain.exponentialRampToValueAtTime(0.0065 + vel * 0.0038, t0 + (kind === "active" ? 0.13 : 0.03));
+      gOrbit.gain.exponentialRampToValueAtTime(0.0065 + vel * 0.0038, t0 + (profileKind === "active" ? 0.31 : 0.05));
       gOrbit.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
       if (panMain) panMain.pan.setValueAtTime(Math.max(-1, Math.min(1, pan * 0.9 - 0.2)), t0);
       if (panOver) panOver.pan.setValueAtTime(Math.max(-1, Math.min(1, -pan * 0.95 + 0.2)), t0);
@@ -978,7 +979,7 @@ if (nameFxCanvas) {
     const movingNow = performance.now() - namePointerLastMoveAt < 55 && pointerSpeed > 0.14;
     if (NAME_FX_AUDIO_MODE === "light-bubbly" && pointer.active && movingNow) {
       const nowMs = performance.now();
-      if (nowMs - nameSfx.lastMoveToneAt > 360) {
+      if (nowMs - nameSfx.lastMoveToneAt > 700) {
         nameSfx.lastMoveToneAt = nowMs;
         void playNameFxTone("active", pointerSpeed);
       }
