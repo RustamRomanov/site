@@ -523,6 +523,75 @@ if (nameFxCanvas) {
   const pointer = { x: -9999, y: -9999, px: -9999, py: -9999, vx: 0, vy: 0, active: false };
   const repelRadius = 188;
   const repelStrength = 2.85;
+  const nameSfx = {
+    lastAt: 0,
+    wasActive: false,
+    wasScattered: false,
+    lastScatterAt: 0,
+  };
+
+  const playNameFxTone = async (kind, velocity = 0) => {
+    const now = performance.now();
+    const minGap =
+      kind === "scatter" ? 120 :
+      kind === "active" ? 140 :
+      kind === "gather" ? 220 : 180;
+    if (now - nameSfx.lastAt < minGap) return;
+    nameSfx.lastAt = now;
+
+    await unlockSiteAudio();
+    const ac = await getUiAudio();
+    if (!ac) return;
+    if (ac.state !== "running") await ac.resume().catch(() => {});
+    if (ac.state !== "running") return;
+
+    const t0 = ac.currentTime;
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    const filter = ac.createBiquadFilter();
+    const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
+    const pan = Math.max(-1, Math.min(1, pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1));
+    const speedBoost = Math.min(0.35, velocity * 0.018);
+
+    if (kind === "scatter") {
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(220 + velocity * 6, t0);
+      osc.frequency.exponentialRampToValueAtTime(520 + velocity * 8, t0 + 0.09);
+      filter.type = "highpass";
+      filter.frequency.setValueAtTime(180, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.028 + speedBoost, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12);
+    } else if (kind === "active") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(340, t0);
+      osc.frequency.exponentialRampToValueAtTime(430 + velocity * 3, t0 + 0.045);
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(650, t0);
+      filter.Q.setValueAtTime(1.6, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.014 + speedBoost * 0.7, t0 + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.075);
+    } else {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(460, t0);
+      osc.frequency.exponentialRampToValueAtTime(250, t0 + 0.12);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(1200, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.022, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
+    }
+
+    if (panNode) {
+      panNode.pan.setValueAtTime(pan, t0);
+      osc.connect(filter).connect(gain).connect(panNode).connect(ac.destination);
+    } else {
+      osc.connect(filter).connect(gain).connect(ac.destination);
+    }
+    osc.start(t0);
+    osc.stop(t0 + (kind === "gather" ? 0.17 : 0.13));
+  };
 
   function buildNameParticles() {
     const dpr = window.devicePixelRatio || 1;
@@ -614,6 +683,7 @@ if (nameFxCanvas) {
     const ptrSpeed = Math.hypot(pointer.vx, pointer.vy);
     const speedBoost = 1 + Math.min(0.7, ptrSpeed * 0.12);
 
+    let displacementAcc = 0;
     particles.forEach((p) => {
       if (pointer.active) {
         const dx = p.x - pointer.x;
@@ -640,6 +710,7 @@ if (nameFxCanvas) {
       p.y += p.vy;
 
       const displacement = Math.hypot(p.x - p.x0, p.y - p.y0);
+      displacementAcc += displacement;
       if (displacement > 0.7) {
         nctx.fillStyle = nameFxGlow ? "rgba(200,164,104,.2)" : "rgba(236,233,225,.18)";
         nctx.beginPath();
@@ -650,6 +721,25 @@ if (nameFxCanvas) {
       nctx.fillStyle = nameFxGlow ? "rgba(200,164,104,.96)" : "rgba(236,233,225,.96)";
       nctx.fillRect(p.x, p.y, p.s, p.s);
     });
+
+    const avgDisplacement = particles.length ? displacementAcc / particles.length : 0;
+    const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
+    if (pointer.active && !nameSfx.wasActive) {
+      nameSfx.wasActive = true;
+      void playNameFxTone("scatter", pointerSpeed);
+    }
+    if (pointer.active && avgDisplacement > 0.9 && performance.now() - nameSfx.lastScatterAt > 160) {
+      nameSfx.wasScattered = true;
+      nameSfx.lastScatterAt = performance.now();
+      void playNameFxTone("active", pointerSpeed);
+    }
+    if (!pointer.active && nameSfx.wasActive) {
+      nameSfx.wasActive = false;
+      if (nameSfx.wasScattered || avgDisplacement > 0.45) {
+        nameSfx.wasScattered = false;
+        void playNameFxTone("gather", 0);
+      }
+    }
   }
 
   buildNameParticles();
