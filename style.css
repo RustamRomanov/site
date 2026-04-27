@@ -1358,9 +1358,9 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .S,.sp-switch,.about-full,.ct{padding-left:20px;padding-right:20px}
   .intro{padding:8px 20px 30px;justify-content:flex-start}
   .showreel-btn{font-size:1rem;letter-spacing:0.14em;padding:13px 34px;min-height:0;white-space:normal;text-align:center;line-height:1.2}
-  .showreel-cta{align-self:stretch;justify-content:stretch;flex:1 0 100%;padding:0 8px}
-  .showreel-cta .showreel-btn{width:100%;max-width:100%;border-radius:8px}
-  .intro-slogan-block{padding-left:0;gap:12px;margin-top:56px}
+  .showreel-cta{align-self:stretch;justify-content:stretch;flex:1 0 100%;padding:0;width:100vw;margin-left:calc(50% - 50vw)}
+  .showreel-cta .showreel-btn{width:100%;max-width:100%;border-radius:0}
+  .intro-slogan-block{padding-left:0;gap:12px;margin-top:0}
   .intro-slogan-block .ir-oneline.ir{
     margin:18px 0 0 2px;
     font-size:clamp(0.46rem,2.45vw,0.68rem);
@@ -1403,7 +1403,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .bts-viewer img{max-width:92vw;max-height:82vh}
   .hdr{flex-wrap:wrap;gap:12px}
   footer{flex-direction:column;gap:10px;text-align:center}
-  .iname{height:236px;margin-top:150px}
+  .iname{height:236px;margin-top:8px}
   .ist{gap:8px;font-size:.66rem}
   .istat{padding:7px 10px}
   .istat em{white-space:nowrap}
@@ -1411,8 +1411,8 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   #intro-stats{row-gap:8px;display:flex;flex-direction:column;align-items:flex-start}
   #intro-stats .icue{order:90;flex:0 0 auto;align-items:center;gap:5px;margin-left:auto;transform:translateY(-16px)}
   #intro-stats .icue-l{height:22px}
-  #intro-stats .showreel-cta{order:99;width:100%;margin-top:8px}
-  .ifoot{margin-top:auto}
+  #intro-stats .showreel-cta{order:99;width:100%;margin-top:10px}
+  .ifoot{margin-top:auto;width:100%}
   .sp-block{padding:14px}
   .sp-switch{padding-top:24px;padding-bottom:20px}
   .sp-layout{gap:10px;align-items:start}
