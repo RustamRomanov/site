@@ -1378,11 +1378,12 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   }
   .intro-slogan-block .ir-oneline.ir{
     margin:0;
-    font-size:clamp(0.46rem,2.45vw,0.68rem);
-    letter-spacing:clamp(0.05em,0.24vw,0.16em);
+    font-size:clamp(0.56rem,3.3vw,0.9rem);
+    letter-spacing:clamp(0.02em,0.2vw,0.1em);
     width:100%;
     text-align:left;
     padding:0;
+    display:block;
   }
   .showreel-bubble-wrap,.showreel-bubble{width:100%}
   .showreel-pause{left:10px;bottom:10px;min-width:44px;min-height:44px}
@@ -1431,7 +1432,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
   .hero-scroll-cue{
     display:flex;
     position:fixed;
-    top:34px;
+    top:44px;
     right:10px;
     z-index:1300;
     align-items:center;
