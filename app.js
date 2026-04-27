@@ -529,10 +529,13 @@ if (nameFxCanvas) {
     wasScattered: false,
     lastScatterAt: 0,
   };
+  const NAME_FX_AUDIO_MODE = "light-bubbly"; // off | light-bubbly | hiss
+  let namePointerLastMoveAt = 0;
   let nameNoiseBuffer = null;
   const nameHiss = {
     source: null,
     gain: null,
+    hp: null,
     filter: null,
     pan: null,
     running: false,
@@ -552,6 +555,7 @@ if (nameFxCanvas) {
   };
 
   const ensureNameHiss = async () => {
+    if (NAME_FX_AUDIO_MODE !== "hiss") return null;
     await unlockSiteAudio();
     const ac = await getUiAudio();
     if (!ac) return null;
@@ -562,20 +566,24 @@ if (nameFxCanvas) {
     const src = ac.createBufferSource();
     src.buffer = getNameNoiseBuffer(ac);
     src.loop = true;
+    const hp = ac.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.setValueAtTime(1650, ac.currentTime);
     const f = ac.createBiquadFilter();
     f.type = "bandpass";
-    f.frequency.setValueAtTime(2200, ac.currentTime);
-    f.Q.setValueAtTime(0.65, ac.currentTime);
+    f.frequency.setValueAtTime(3950, ac.currentTime);
+    f.Q.setValueAtTime(1.55, ac.currentTime);
     const g = ac.createGain();
     g.gain.setValueAtTime(0.0001, ac.currentTime);
     const p = ac.createStereoPanner ? ac.createStereoPanner() : null;
     if (p) {
-      src.connect(f).connect(g).connect(p).connect(ac.destination);
+      src.connect(hp).connect(f).connect(g).connect(p).connect(ac.destination);
     } else {
-      src.connect(f).connect(g).connect(ac.destination);
+      src.connect(hp).connect(f).connect(g).connect(ac.destination);
     }
     src.start();
     nameHiss.source = src;
+    nameHiss.hp = hp;
     nameHiss.gain = g;
     nameHiss.filter = f;
     nameHiss.pan = p;
@@ -583,17 +591,29 @@ if (nameFxCanvas) {
     return { ac };
   };
 
-  const updateNameHiss = async (intensity, panNorm) => {
+  const updateNameHiss = async (intensity, panNorm, motion = 0, tSec = 0) => {
+    if (NAME_FX_AUDIO_MODE !== "hiss") return;
     const state = await ensureNameHiss();
-    if (!state || !nameHiss.gain || !nameHiss.filter) return;
+    if (!state || !nameHiss.gain || !nameHiss.filter || !nameHiss.hp) return;
     const t = state.ac.currentTime;
     const k = Math.max(0, Math.min(1, intensity));
-    const targetGain = 0.0001 + k * 0.052;
-    const targetFreq = 1500 + k * 1800;
+    const motionK = Math.max(0, Math.min(1, motion / 2.2));
+    const sparkle =
+      0.62 +
+      0.28 * Math.abs(Math.sin(tSec * 17.3 + panNorm * 1.7)) +
+      0.22 * Math.abs(Math.sin(tSec * 31.8 + 0.7));
+    const targetGain = 0.0001 + k * (0.043 + motionK * 0.085) * sparkle;
+    const targetHp = 1450 + k * 1100 + motionK * 500;
+    const targetFreq = 3350 + k * 3100 + motionK * 1500 + Math.sin(tSec * 22.4) * 420;
+    const targetQ = Math.max(0.75, 1.45 + motionK * 1.5 + Math.sin(tSec * 27.5 + 0.3) * 0.3);
     nameHiss.gain.gain.cancelScheduledValues(t);
-    nameHiss.gain.gain.exponentialRampToValueAtTime(targetGain, t + 0.055);
+    nameHiss.gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, targetGain), t + 0.03);
+    nameHiss.hp.frequency.cancelScheduledValues(t);
+    nameHiss.hp.frequency.exponentialRampToValueAtTime(Math.max(120, targetHp), t + 0.03);
     nameHiss.filter.frequency.cancelScheduledValues(t);
-    nameHiss.filter.frequency.exponentialRampToValueAtTime(Math.max(80, targetFreq), t + 0.06);
+    nameHiss.filter.frequency.exponentialRampToValueAtTime(Math.max(140, targetFreq), t + 0.035);
+    nameHiss.filter.Q.cancelScheduledValues(t);
+    nameHiss.filter.Q.linearRampToValueAtTime(targetQ, t + 0.035);
     if (nameHiss.pan) {
       nameHiss.pan.pan.cancelScheduledValues(t);
       nameHiss.pan.pan.linearRampToValueAtTime(Math.max(-1, Math.min(1, panNorm)), t + 0.05);
@@ -601,15 +621,17 @@ if (nameFxCanvas) {
   };
 
   const stopNameHiss = async () => {
+    if (NAME_FX_AUDIO_MODE !== "hiss") return;
     if (!nameHiss.running || !nameHiss.gain) return;
     const ac = await getUiAudio();
     if (!ac) return;
     const t = ac.currentTime;
     nameHiss.gain.gain.cancelScheduledValues(t);
-    nameHiss.gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+    nameHiss.gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
   };
 
   const playNameFxTone = async (kind, velocity = 0) => {
+    if (NAME_FX_AUDIO_MODE === "off") return;
     const now = performance.now();
     const minGap =
       kind === "scatter" ? 120 :
@@ -625,6 +647,46 @@ if (nameFxCanvas) {
     if (ac.state !== "running") return;
 
     const t0 = ac.currentTime;
+    if (NAME_FX_AUDIO_MODE === "light-bubbly") {
+      const pan = Math.max(-1, Math.min(1, pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1));
+      const main = ac.createOscillator();
+      const overtone = ac.createOscillator();
+      const gMain = ac.createGain();
+      const gOver = ac.createGain();
+      const lp = ac.createBiquadFilter();
+      const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      const vel = Math.min(1, velocity / 2.2);
+      const base = kind === "gather" ? 460 : 620 + vel * 160;
+      const dur = kind === "gather" ? 0.16 : 0.11;
+      lp.type = "lowpass";
+      lp.frequency.setValueAtTime(2200, t0);
+      main.type = "sine";
+      overtone.type = "triangle";
+      main.frequency.setValueAtTime(base * 1.02, t0);
+      main.frequency.exponentialRampToValueAtTime(base * 0.78, t0 + dur);
+      overtone.frequency.setValueAtTime(base * 1.9, t0);
+      overtone.frequency.exponentialRampToValueAtTime(base * 1.25, t0 + dur * 0.9);
+      gMain.gain.setValueAtTime(0.0001, t0);
+      gMain.gain.exponentialRampToValueAtTime(0.012 + vel * 0.007, t0 + 0.016);
+      gMain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      gOver.gain.setValueAtTime(0.0001, t0);
+      gOver.gain.exponentialRampToValueAtTime(0.0045 + vel * 0.003, t0 + 0.013);
+      gOver.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 0.82);
+      if (panNode) {
+        panNode.pan.setValueAtTime(pan, t0);
+        main.connect(gMain).connect(lp).connect(panNode).connect(ac.destination);
+        overtone.connect(gOver).connect(lp).connect(panNode).connect(ac.destination);
+      } else {
+        main.connect(gMain).connect(lp).connect(ac.destination);
+        overtone.connect(gOver).connect(lp).connect(ac.destination);
+      }
+      main.start(t0);
+      overtone.start(t0 + 0.004);
+      main.stop(t0 + dur);
+      overtone.stop(t0 + dur * 0.86);
+      return;
+    }
+
     const osc = ac.createOscillator();
     const gain = ac.createGain();
     const filter = ac.createBiquadFilter();
@@ -784,6 +846,10 @@ if (nameFxCanvas) {
     const h = nameFxCanvas.height / (window.devicePixelRatio || 1);
     nctx.clearRect(0, 0, w, h);
     const t = performance.now() * 0.001;
+    pointer.vx *= 0.72;
+    pointer.vy *= 0.72;
+    if (Math.abs(pointer.vx) < 0.01) pointer.vx = 0;
+    if (Math.abs(pointer.vy) < 0.01) pointer.vy = 0;
 
     const ptrSpeed = Math.hypot(pointer.vx, pointer.vy);
     const speedBoost = 1 + Math.min(0.7, ptrSpeed * 0.12);
@@ -837,9 +903,10 @@ if (nameFxCanvas) {
       nameSfx.wasScattered = true;
       nameSfx.lastScatterAt = performance.now();
     }
-    const hissIntensity = pointer.active ? Math.min(1, avgDisplacement / 2.6) : 0;
+    const movingNow = performance.now() - namePointerLastMoveAt < 55 && pointerSpeed > 0.14;
+    const hissIntensity = pointer.active && movingNow ? Math.min(1, avgDisplacement / 2.4) : 0;
     const hissPan = pointer.x / Math.max(1, nameFxCanvas.clientWidth) * 2 - 1;
-    if (hissIntensity > 0.02) void updateNameHiss(hissIntensity, hissPan);
+    if (hissIntensity > 0.02) void updateNameHiss(hissIntensity, hissPan, pointerSpeed, t);
     else void stopNameHiss();
     if (!pointer.active && nameSfx.wasActive) {
       nameSfx.wasActive = false;
@@ -876,8 +943,11 @@ if (nameFxCanvas) {
     pointer.py = pointer.y;
     pointer.x = e.clientX - r.left;
     pointer.y = e.clientY - r.top;
-    pointer.vx = pointer.x - pointer.px;
-    pointer.vy = pointer.y - pointer.py;
+    const dx = pointer.x - pointer.px;
+    const dy = pointer.y - pointer.py;
+    pointer.vx = Math.max(-34, Math.min(34, dx));
+    pointer.vy = Math.max(-34, Math.min(34, dy));
+    if (Math.hypot(dx, dy) > 0.45) namePointerLastMoveAt = performance.now();
   });
   nameFxCanvas.addEventListener("mouseleave", () => {
     pointer.active = false;
