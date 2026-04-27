@@ -873,17 +873,17 @@ if (nameFxCanvas) {
     const panNode = ac.createStereoPanner ? ac.createStereoPanner() : null;
 
     main.type = "sine";
-    over.type = "triangle";
-    shimmer.type = "sine";
+    over.type = "sine";
+    shimmer.type = "triangle";
     orbit.type = "sine";
     lfo.type = "sine";
     hp.type = "highpass";
     bp.type = "bandpass";
-    hp.frequency.setValueAtTime(420, ac.currentTime);
-    bp.frequency.setValueAtTime(1700, ac.currentTime);
-    bp.Q.setValueAtTime(0.8, ac.currentTime);
-    lfo.frequency.setValueAtTime(4.2, ac.currentTime);
-    lfoGain.gain.setValueAtTime(24, ac.currentTime);
+    hp.frequency.setValueAtTime(180, ac.currentTime);
+    bp.frequency.setValueAtTime(980, ac.currentTime);
+    bp.Q.setValueAtTime(1.1, ac.currentTime);
+    lfo.frequency.setValueAtTime(2.9, ac.currentTime);
+    lfoGain.gain.setValueAtTime(16, ac.currentTime);
 
     mainGain.gain.setValueAtTime(0.0001, ac.currentTime);
     overGain.gain.setValueAtTime(0.0001, ac.currentTime);
@@ -938,41 +938,45 @@ if (nameFxCanvas) {
     const t = ac.currentTime;
     const s = Math.max(0, Math.min(1, scatter));
     const m = Math.max(0, Math.min(1, motion));
-    const energy = Math.max(0, Math.min(1, s * 0.78 + m * 0.55));
-    const base = 300 + energy * 240;
+    const energy = Math.max(0, Math.min(1, s * 0.82 + m * 0.5));
+    const bubbleRate = 2.2 + s * 8.5 + m * 2.8;
+    const phase = ac.currentTime * bubbleRate * Math.PI * 2;
+    const bubblePulse = Math.pow(Math.max(0, Math.sin(phase)), 2.4);
+    const risePulse = Math.pow(Math.max(0, Math.sin(phase + Math.PI * 0.35)), 2.1);
+    const base = 240 + energy * 170 + risePulse * 55;
 
     nameWarp.main.frequency.cancelScheduledValues(t);
     nameWarp.over.frequency.cancelScheduledValues(t);
     nameWarp.shimmer.frequency.cancelScheduledValues(t);
     nameWarp.orbit.frequency.cancelScheduledValues(t);
-    nameWarp.main.frequency.exponentialRampToValueAtTime(base * 1.0, t + 0.06);
-    nameWarp.over.frequency.exponentialRampToValueAtTime(base * 1.85, t + 0.06);
-    nameWarp.shimmer.frequency.exponentialRampToValueAtTime(base * 2.9, t + 0.06);
-    nameWarp.orbit.frequency.exponentialRampToValueAtTime(base * 0.5, t + 0.06);
+    nameWarp.main.frequency.exponentialRampToValueAtTime(base * 1.04, t + 0.045);
+    nameWarp.over.frequency.exponentialRampToValueAtTime(base * 1.62, t + 0.045);
+    nameWarp.shimmer.frequency.exponentialRampToValueAtTime(base * 2.45, t + 0.045);
+    nameWarp.orbit.frequency.exponentialRampToValueAtTime(base * 0.58, t + 0.045);
 
     nameWarp.hp.frequency.cancelScheduledValues(t);
     nameWarp.bp.frequency.cancelScheduledValues(t);
     nameWarp.bp.Q.cancelScheduledValues(t);
     nameWarp.lfo.frequency.cancelScheduledValues(t);
     nameWarp.lfoGain.gain.cancelScheduledValues(t);
-    nameWarp.hp.frequency.exponentialRampToValueAtTime(380 + energy * 520, t + 0.07);
-    nameWarp.bp.frequency.exponentialRampToValueAtTime(1600 + energy * 2900, t + 0.07);
-    nameWarp.bp.Q.linearRampToValueAtTime(0.75 + energy * 1.2, t + 0.07);
-    nameWarp.lfo.frequency.linearRampToValueAtTime(3.8 + energy * 5.4, t + 0.07);
-    nameWarp.lfoGain.gain.linearRampToValueAtTime(14 + energy * 28, t + 0.07);
+    nameWarp.hp.frequency.exponentialRampToValueAtTime(130 + energy * 360 + bubblePulse * 90, t + 0.05);
+    nameWarp.bp.frequency.exponentialRampToValueAtTime(760 + energy * 1700 + bubblePulse * 520, t + 0.05);
+    nameWarp.bp.Q.linearRampToValueAtTime(1.0 + energy * 1.45 + bubblePulse * 0.45, t + 0.05);
+    nameWarp.lfo.frequency.linearRampToValueAtTime(2.2 + energy * 2.8 + bubblePulse * 0.8, t + 0.05);
+    nameWarp.lfoGain.gain.linearRampToValueAtTime(8 + energy * 18 + risePulse * 8, t + 0.05);
 
-    const gMain = 0.0001 + energy * 0.028;
-    const gOver = 0.0001 + energy * 0.014;
-    const gShimmer = 0.0001 + energy * 0.011;
-    const gOrbit = 0.0001 + energy * 0.012;
+    const gMain = 0.0001 + energy * (0.014 + bubblePulse * 0.04);
+    const gOver = 0.0001 + energy * (0.006 + bubblePulse * 0.022);
+    const gShimmer = 0.0001 + energy * (0.004 + bubblePulse * 0.017);
+    const gOrbit = 0.0001 + energy * (0.004 + bubblePulse * 0.014);
     nameWarp.mainGain.gain.cancelScheduledValues(t);
     nameWarp.overGain.gain.cancelScheduledValues(t);
     nameWarp.shimmerGain.gain.cancelScheduledValues(t);
     nameWarp.orbitGain.gain.cancelScheduledValues(t);
-    nameWarp.mainGain.gain.exponentialRampToValueAtTime(gMain, t + 0.05);
-    nameWarp.overGain.gain.exponentialRampToValueAtTime(gOver, t + 0.05);
-    nameWarp.shimmerGain.gain.exponentialRampToValueAtTime(gShimmer, t + 0.05);
-    nameWarp.orbitGain.gain.exponentialRampToValueAtTime(gOrbit, t + 0.05);
+    nameWarp.mainGain.gain.exponentialRampToValueAtTime(gMain, t + 0.035);
+    nameWarp.overGain.gain.exponentialRampToValueAtTime(gOver, t + 0.035);
+    nameWarp.shimmerGain.gain.exponentialRampToValueAtTime(gShimmer, t + 0.035);
+    nameWarp.orbitGain.gain.exponentialRampToValueAtTime(gOrbit, t + 0.035);
 
     if (nameWarp.panNode) {
       nameWarp.panNode.pan.cancelScheduledValues(t);
