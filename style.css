@@ -1439,7 +1439,7 @@ footer{border-top:none;padding:24px 40px;display:flex;justify-content:space-betw
     gap:5px;
   }
   .hero-scroll-cue .icue-l{height:22px}
-  #intro-stats .showreel-cta{order:99;grid-column:1 / -1;width:100%;margin-top:-2px;padding:0}
+  #intro-stats .showreel-cta{order:99;grid-column:1 / -1;width:100%;margin-top:calc(-2px + 5mm);padding:0}
   .ifoot{margin-top:auto;width:100%;padding-bottom:10px}
   .sp-block{padding:14px}
   .sp-switch{padding-top:24px;padding-bottom:20px}
